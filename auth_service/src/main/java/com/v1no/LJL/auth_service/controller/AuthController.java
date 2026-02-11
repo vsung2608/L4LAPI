@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.v1no.LJL.auth_service.model.dto.request.LoginRequest;
+import com.v1no.LJL.auth_service.model.dto.request.RegisterRequest;
+import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
 import com.v1no.LJL.auth_service.service.AuthService;
 
 @RestController
@@ -14,7 +17,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody @Valid RegistrationRequest request) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
         var response = authService.register(request);
         return ResponseEntity.ok(response);
     }
