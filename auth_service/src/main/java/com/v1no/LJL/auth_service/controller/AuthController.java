@@ -1,6 +1,7 @@
 package com.v1no.LJL.auth_service.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,15 +10,22 @@ import com.v1no.LJL.auth_service.model.dto.request.LoginRequest;
 import com.v1no.LJL.auth_service.model.dto.request.RegisterRequest;
 import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
 import com.v1no.LJL.auth_service.service.AuthService;
+import com.v1no.LJL.auth_service.service.OauthService;
+import com.v1no.LJL.auth_service.service.PasswordResetTokenService;
+import com.v1no.LJL.auth_service.service.RefreshTokenService;
+import com.v1no.LJL.common.dto.ApiResponse;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthService authService;
+    private final OauthService oauthService;
+    private final PasswordResetTokenService passwordResetTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<ApiResponse<String>> register(@RequestBody @Valid RegisterRequest request) {
         var response = authService.register(request);
         return ResponseEntity.ok(response);
     }

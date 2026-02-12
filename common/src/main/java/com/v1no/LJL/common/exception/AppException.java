@@ -1,4 +1,4 @@
-package common.exception;
+package com.v1no.LJL.common.exception;
 
 import lombok.*;
 
@@ -8,5 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AppException extends RuntimeException {
-    private BusinessError error;
+    private ErrorCode errorCode;
 }

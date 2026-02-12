@@ -16,6 +16,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.v1no.LJL.auth_service.model.entity.UserCredential;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -37,24 +39,35 @@ public class JwtService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
-    }
-
-    public String generateToken(Map<String, Object> claims, UserDetails userDetails) {
-        var authorities = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-
+    private String buildToken(
+        Map<String, Object> extraClaims, 
+        UserCredential userCredential, 
+        long expiration
+    ) {
         return Jwts.builder()
-                .claims(claims)
-                .subject(userDetails.getUsername())
+                .claims(extraClaims)
+                .subject(userCredential.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .id(UUID.randomUUID().toString())
-                .claim("authorities", authorities)
                 .signWith(getKey())
                 .compact();
+    }
+
+    public String generateAccessToken(UserCredential userCredential) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userCredential.getId());
+        claims.put("role", userCredential.getRole());
+        claims.put("type", "ACCESS_TOKEN");
+        
+        return buildToken(claims, userCredential, jwtExpiration);
+    }
+
+    public String generateRefreshToken(UserCredential userCredential) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "REFRESH_TOKEN"); // Quan trọng: Refresh token không cần chứa Role để giảm tải payload
+        
+        return buildToken(claims, userCredential, refreshExpiration);
     }
 
     public String buildToken(HashMap<String, Object> claims, UserDetails userDetails, long jwtExpiration) {

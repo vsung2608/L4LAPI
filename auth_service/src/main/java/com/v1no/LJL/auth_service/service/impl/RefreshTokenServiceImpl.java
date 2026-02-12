@@ -1,6 +1,7 @@
 package com.v1no.LJL.auth_service.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,10 +50,6 @@ public class RefreshTokenServiceImpl {
         
         return rawToken;
     }
-    
-    private String hashToken(String rawToken) {
-        return DigestUtils.sha256Hex(rawToken);
-    }
 
     public AuthResponse refreshAccessToken(String rawToken) {
         String tokenHash = hashToken(rawToken);
@@ -65,7 +62,7 @@ public class RefreshTokenServiceImpl {
             throw new InvalidTokenException("Refresh token is invalid");
         }
 
-        String newAccessToken = jwtService.generateAccessToken(refreshToken.getUser());
+        String newAccessToken = jwtService.generateToken(refreshToken.getUser());
         
         refreshToken.revoke();
         refreshTokenRepository.save(refreshToken);
@@ -73,5 +70,17 @@ public class RefreshTokenServiceImpl {
         String newRefreshToken = createRefreshToken(refreshToken.getUser());
         
         return new AuthResponse(newAccessToken, newRefreshToken);
+    }
+
+    public void logoutAllDevices(UUID userId) {
+        List<RefreshToken> tokens = refreshTokenRepository
+            .findByUserIdAndRevokedFalse(userId);
+        
+        tokens.forEach(RefreshToken::revoke);
+        refreshTokenRepository.saveAll(tokens);
+    }
+
+    private String hashToken(String rawToken) {
+        return DigestUtils.sha256Hex(rawToken);
     }
 }

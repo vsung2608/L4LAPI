@@ -1,6 +1,7 @@
 package com.v1no.LJL.auth_service.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
 import com.v1no.LJL.auth_service.model.entity.PasswordResetToken;
 import com.v1no.LJL.auth_service.model.entity.RefreshToken;
 import com.v1no.LJL.auth_service.model.entity.UserCredential;
+import com.v1no.LJL.auth_service.model.enums.Role;
 import com.v1no.LJL.auth_service.repository.RefreshTokenRepository;
 import com.v1no.LJL.auth_service.repository.UserCredentialRepository;
 import com.v1no.LJL.auth_service.security.JwtService;
@@ -52,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
             .emailVerified(false)
             .isActive(true)
             .isLocked(false)
+            .role(Role.USER)
             .failedLoginCount(0)
             .build();
         
@@ -97,64 +100,6 @@ public class AuthServiceImpl implements AuthService {
         
         refreshToken.revoke();
         refreshTokenRepository.save(refreshToken);
-    }
-
-    public void requestPasswordReset(String email) {
-        // 1. Tìm user
-        UserCredential user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new NotFoundException("Email not found"));
-        
-        // 2. Generate random token
-        String rawToken = generateSecureToken();
-        String tokenHash = hashToken(rawToken);
-        
-        // 3. Tạo reset token record
-        PasswordResetToken resetToken = PasswordResetToken.builder()
-            .user(user)
-            .tokenHash(tokenHash)
-            .expiresAt(LocalDateTime.now().plusHours(1)) // 1 hour
-            .used(false)
-            .build();
-        
-        resetTokenRepository.save(resetToken);
-        
-        // 4. Gửi email
-        String resetLink = buildResetLink(rawToken);
-        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
-    }
-    
-    private String buildResetLink(String token) {
-        return "https://app.nihongo.com/reset-password?token=" + token;
-    }
-
-    public void resetPassword(String rawToken, String newPassword) {
-        String tokenHash = hashToken(rawToken);
-
-        PasswordResetToken resetToken = resetTokenRepository
-            .findByTokenHash(tokenHash)
-            .orElseThrow(() -> new InvalidTokenException("Invalid reset token"));
-        
-        if (!resetToken.isValid()) {
-            throw new InvalidTokenException("Token is expired or already used");
-        }
-        
-        // 4. Get user
-        UserCredential user = resetToken.getUser();
-        
-        // 5. Update password
-        String newPasswordHash = passwordEncoder.encode(newPassword);
-        user.setPasswordHash(newPasswordHash);
-        userRepository.save(user);
-        
-        // 6. Mark token as used
-        resetToken.markAsUsed();
-        resetTokenRepository.save(resetToken);
-        
-        // 7. Revoke all refresh tokens (force logout all devices)
-        refreshTokenService.logoutAllDevices(user.getId());
-        
-        // 8. Send notification email
-        emailService.sendPasswordChangedNotification(user.getEmail());
     }
 
     private String hashToken(String rawToken) {

@@ -1,0 +1,7 @@
+application:
+  security:
+    jwt:
+      secrets:
+        access-token: 36000000
+      expirations:
+        refresh-token: 604800000

@@ -1,4 +1,4 @@
-package common.dto;
+package com.v1no.LJL.common.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,15 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
 
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageResponse<T> {
-    private List<T> data; 
-    private int page;
-    private int size;
-    private long totalElements;
-    private int totalPages;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ApiResponse<T> {
+    private int code;
+    private String message;
+    private T result;
 }

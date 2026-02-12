@@ -1,6 +1,10 @@
-pakage common.exception;
+package com.v1no.LJL.common.exception;
+
 import org.springframework.http.HttpStatus;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCode {
     EMAIL_EXISTED(1001, "Email đã tồn tại. Vui lòng chọn email khác!", HttpStatus.BAD_REQUEST),
     OLD_PASSWORD_INVALID(1002, "Mật khẩu cũ không hợp lệ. Vui lòng kiểm tra lại!", HttpStatus.BAD_REQUEST),
@@ -13,7 +17,7 @@ public enum ErrorCode {
     private final String message;
     private final HttpStatus status;
 
-    BusinessError(int code, String message, HttpStatus status) {
+    ErrorCode(int code, String message, HttpStatus status) {
         this.code = code;
         this.message = message;
         this.status = status;
