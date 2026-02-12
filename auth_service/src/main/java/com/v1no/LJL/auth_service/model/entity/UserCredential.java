@@ -50,6 +50,9 @@ public class UserCredential {
     @Builder.Default
     private Boolean emailVerified = false;
 
+    @Column(name = "verification_token", length = 64)
+    private String verificationToken;
+
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private Boolean isActive = true;

@@ -2,20 +2,19 @@ package com.v1no.LJL.auth_service.service.impl;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.v1no.LJL.auth_service.exception.InvalidTokenException;
 import com.v1no.LJL.auth_service.model.entity.PasswordResetToken;
-import com.v1no.LJL.auth_service.model.entity.RefreshToken;
 import com.v1no.LJL.auth_service.model.entity.UserCredential;
 import com.v1no.LJL.auth_service.repository.PasswordResetTokenRepository;
 import com.v1no.LJL.auth_service.repository.UserCredentialRepository;
 import com.v1no.LJL.auth_service.service.RefreshTokenService;
+import com.v1no.LJL.common.event.ForgotPasswordEmailEvent;
 
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,8 @@ public class PasswordResetTokenServiceImpl {
     private final RefreshTokenService refreshTokenService;
     private final PasswordResetTokenRepository resetTokenRepository;
     private final UserCredentialRepository userCredentialRepository;
+
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void requestPasswordReset(String email) {
         UserCredential user = userCredentialRepository.findByEmail(email)
@@ -46,13 +47,16 @@ public class PasswordResetTokenServiceImpl {
             .build();
         
         resetTokenRepository.save(resetToken);
-        
-        String resetLink = buildResetLink(rawToken);
+
+        ForgotPasswordEmailEvent event = ForgotPasswordEmailEvent.builder()
+            .userId(user.getId())
+            .email(user.getEmail())
+            .token(rawToken)
+            .build();
+
+        kafkaTemplate.send("forgot-password-email", event);
     }
     
-    private String buildResetLink(String token) {
-        return "https://app.nihongo.com/reset-password?token=" + token;
-    }
 
     public void resetPassword(String rawToken, String newPassword) {
         String tokenHash = hashToken(rawToken);
@@ -75,8 +79,6 @@ public class PasswordResetTokenServiceImpl {
         resetTokenRepository.save(resetToken);
         
         refreshTokenService.logoutAllDevices(user.getId());
-        
-        // 8. Send notification email
     }
 
     public String generateSecureCode(){

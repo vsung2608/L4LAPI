@@ -62,7 +62,7 @@ public class RefreshTokenServiceImpl {
             throw new InvalidTokenException("Refresh token is invalid");
         }
 
-        String newAccessToken = jwtService.generateToken(refreshToken.getUser());
+        String newAccessToken = jwtService.generateAccessToken(refreshToken.getUser());
         
         refreshToken.revoke();
         refreshTokenRepository.save(refreshToken);

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa; margin: 0; padding: 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f7fa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px; max-width: 600px; margin: 0 auto;">
+                    <tr>
+                        <td style="padding: 40px;">
+                            
+                            <!-- Logo -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center" style="padding-bottom: 30px;">
+                                        <div style="font-size: 32px; font-weight: 700; color: #0D9488;">LearnJL</div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Header -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td style="font-weight: 700; font-size: 24px; color: #1a1a1a; padding-bottom: 20px;">
+                                        Xin chào, bạn học mới!
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Message -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td style="font-size: 16px; color: #444444; line-height: 1.6; padding-bottom: 15px;">
+                                        Cảm ơn bạn đã đăng ký sử dụng <strong>LearnJL</strong> – Nền tảng học tiếng Nhật trực tuyến hiện đại và hiệu quả!
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 16px; color: #444444; line-height: 1.6; padding-bottom: 15px;">
+                                        Chúng tôi rất vui mừng khi bạn đã chọn LearnJL làm đồng hành trong hành trình chinh phục tiếng Nhật của mình.
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Benefits Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f0fdfa; border-left: 4px solid #0D9488; border-radius: 6px; margin: 15px 0;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <div style="color: #1e40af; font-size: 16px; font-weight: 700; margin-bottom: 10px;">LearnJL cam kết mang đến:</div>
+                                        <ul style="margin: 10px 0; padding-left: 20px; color: #333333;">
+                                            <li style="margin: 10px 0;"><strong>Lộ trình học tập rõ ràng:</strong> Từ N5 đến N1, phù hợp với mọi trình độ</li>
+                                            <li style="margin: 10px 0;"><strong>Bài học đa dạng:</strong> Ngữ pháp, từ vựng, Kanji, luyện nghe và giao tiếp</li>
+                                            <li style="margin: 10px 0;"><strong>Luyện tập tương tác:</strong> Bài tập thực hành phong phú với phản hồi ngay lập tức</li>
+                                            <li style="margin: 10px 0;"><strong>Theo dõi tiến độ:</strong> Thống kê chi tiết giúp bạn nắm rõ quá trình học tập</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- CTA Message -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td style="font-size: 16px; color: #444444; line-height: 1.6; padding: 15px 0 10px 0;">
+                                        <strong>Hãy click nút xác thực dưới đây để kích hoạt tài khoản của bạn:</strong>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center" style="padding: 20px 0;">
+                                        <table cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <td align="center" style="background: linear-gradient(135deg, #0D9488 0%, #0f766e 100%); border-radius: 12px; padding: 0;">
+                                                    <a th:href="${verificationLink}" 
+                                                    target="_blank"
+                                                    style="display: inline-block; padding: 16px 40px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 12px;">
+                                                        XÁC THỰC TÀI KHOẢN
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div style="margin-top: 15px; font-size: 13px; color: #666666;">
+                                            Hoặc copy link sau vào trình duyệt:<br>
+                                            <a th:href="${verificationLink}" 
+                                            th:text="${verificationLink}"
+                                            target="_blank"
+                                            style="color: #0D9488; word-break: break-all;">
+                                                https://example.com/verify?token=...
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Expiry Notice -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center" style="font-size: 14px; color: #666666; padding-bottom: 15px; font-style: italic;">
+                                        ⏰ Link xác thực có hiệu lực trong vòng <strong style="color: #dc2626;">15 phút</strong>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Security Notice -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fef2f2; border-left: 4px solid #dc2626; border-radius: 6px; margin: 15px 0;">
+                                <tr>
+                                    <td style="padding: 15px;">
+                                        <div style="color: #991b1b; font-size: 14px;">
+                                            <strong>⚠️ Lưu ý bảo mật:</strong> Không chia sẻ link này với bất kỳ ai. LearnJL sẽ không bao giờ yêu cầu link xác thực qua điện thoại hoặc tin nhắn.
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Footer Signature -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top: 1px solid #e0e0e0; margin-top: 30px;">
+                                <tr>
+                                    <td align="center" style="padding-top: 20px; font-size: 14px; color: #666666;">
+                                        Chúc bạn học tập hiệu quả!<br>
+                                        <strong style="color: #333333;">Đội ngũ LearnJL</strong>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Footer Info -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center" style="color: #666666; font-size: 13px; line-height: 1.6; padding: 15px 0;">
+                                        115 Bùi Tá Hán, Phường An Khánh, Thành phố Hồ Chí Minh, Việt Nam<br><br>
+                                        Email này được gửi đến <a href="mailto:user@example.com" th:text="${email}" style="color: #0D9488; text-decoration: none;">user@example.com</a><br>
+                                        Bạn nhận được email này vì bạn đã đăng ký tài khoản LearnJL.<br><br>
+                                        <a href="#" style="color: #0D9488; text-decoration: none;">Liên hệ chúng tôi</a> | <a href="#" style="color: #0D9488; text-decoration: none;">Chính sách bảo mật</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
