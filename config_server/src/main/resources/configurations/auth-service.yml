@@ -5,3 +5,22 @@ application:
         access-token: 36000000
       expirations:
         refresh-token: 604800000
+
+google:
+  oauth:
+    client-id: ${GOOGLE_CLIENT_ID:your-client-id.apps.googleusercontent.com}
+    client-secret: ${GOOGLE_CLIENT_SECRET:your-client-secret}
+    redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:8080/api/auth/oauth/google/callback}
+    scope: openid email profile
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+        loggerLevel: full
+  httpclient:
+    enabled: true
+    max-connections: 200
+    max-connections-per-route: 50

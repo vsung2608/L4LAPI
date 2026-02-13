@@ -42,7 +42,7 @@ public class PasswordResetTokenServiceImpl {
         PasswordResetToken resetToken = PasswordResetToken.builder()
             .user(user)
             .tokenHash(tokenHash)
-            .expiresAt(LocalDateTime.now().plusHours(1)) // 1 hour
+            .expiresAt(LocalDateTime.now().plusHours(1))
             .used(false)
             .build();
         
