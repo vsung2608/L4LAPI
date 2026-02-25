@@ -1,18 +1,38 @@
 package com.v1no.LJL.common.dto;
+import java.time.LocalDateTime;
+
+import org.springframework.http.HttpStatus;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
-    private int code;
-    private String message;
-    private T result;
+    private final int status;
+    private final String message;
+    private final T data;
+    private final LocalDateTime timestamp;
+
+    public static <T> ApiResponse<T> ok(T data) {
+        return ApiResponse.<T>builder()
+            .status(HttpStatus.OK.value())
+            .message("Success")
+            .data(data)
+            .timestamp(LocalDateTime.now())
+            .build();
+    }
+
+    public static <T> ApiResponse<T> created(T data) {
+        return ApiResponse.<T>builder()
+            .status(HttpStatus.CREATED.value())
+            .message("Created")
+            .data(data)
+            .timestamp(LocalDateTime.now())
+            .build();
+    }
 }
