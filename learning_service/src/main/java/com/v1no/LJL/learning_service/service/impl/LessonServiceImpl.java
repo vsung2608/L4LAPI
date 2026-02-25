@@ -23,6 +23,7 @@ import com.v1no.LJL.learning_service.model.enums.JlptLevel;
 import com.v1no.LJL.learning_service.repository.CategoryRepository;
 import com.v1no.LJL.learning_service.repository.LessonRepository;
 import com.v1no.LJL.learning_service.service.LessonService;
+import com.v1no.LJL.learning_service.util.YoutubeUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,12 @@ public class LessonServiceImpl implements LessonService {
         log.info("Creating lesson: title={}, categoryId={}", request.title(), request.categoryId());
 
         Category category = findCategoryById(request.categoryId());
-        Lesson saved = lessonRepository.save(lessonMapper.toEntity(request, category));
+
+        String videoId = YoutubeUtil.extractVideoId(request.youtubeVideoUrl());
+        Integer videoDuration = YoutubeUtil.getVideoDurationInSeconds(videoId);
+        String thumbnailUrl = YoutubeUtil.getThumbnailUrl(videoId);
+
+        Lesson saved = lessonRepository.save(lessonMapper.toEntity(request, category, videoId, thumbnailUrl, videoDuration));
 
         log.info("Lesson created: id={}", saved.getId());
         return lessonMapper.toSummary(saved);

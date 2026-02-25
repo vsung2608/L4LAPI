@@ -22,14 +22,14 @@ public class LessonMapper {
         this.sentenceMapper = sentenceMapper;
     }
 
-    public Lesson toEntity(CreateLessonRequest request, Category category) {
+    public Lesson toEntity(CreateLessonRequest request, Category category, String youtubeVideoId, String thumbnailurl, Integer durationSeconds) {
         return Lesson.builder()
             .category(category)
             .title(request.title())
             .description(request.description())
-            .thumbnailUrl(request.thumbnailUrl())
-            .youtubeVideoId(request.youtubeVideoId())
-            .durationSeconds(request.durationSeconds())
+            .thumbnailUrl(thumbnailurl)
+            .youtubeVideoId(youtubeVideoId)
+            .durationSeconds(durationSeconds)
             .level(request.level())
             .displayOrder(request.displayOrder())
             .status(ContentStatus.DRAFT)

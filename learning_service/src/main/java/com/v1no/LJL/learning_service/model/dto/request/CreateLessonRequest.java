@@ -20,13 +20,8 @@ public record CreateLessonRequest(
     @Size(max = 1000, message = "Description must not exceed 1000 characters")
     String description,
 
-    String thumbnailUrl,
-
-    @Size(max = 50, message = "YouTube video ID must not exceed 50 characters")
-    String youtubeVideoId,
-
-    @Min(value = 0, message = "Duration must be >= 0")
-    Integer durationSeconds,
+    @Size(max = 1000, message = "YouTube video URL must not exceed 1000 characters")
+    String youtubeVideoUrl,
 
     @NotNull(message = "Level is required")
     JlptLevel level,

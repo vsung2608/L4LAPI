@@ -1,6 +1,19 @@
 server:
   port: 8081
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/learning_service_db
+    username: nihongo_user
+    password: nihongo_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 eureka:
   client:
     serviceUrl:
