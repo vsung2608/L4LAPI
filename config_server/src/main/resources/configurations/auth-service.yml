@@ -24,3 +24,7 @@ feign:
     enabled: true
     max-connections: 200
     max-connections-per-route: 50
+
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%thread]){cyan} %clr(%logger{36}){yellow} %clr([%file:%line]){magenta} - %msg%n"
