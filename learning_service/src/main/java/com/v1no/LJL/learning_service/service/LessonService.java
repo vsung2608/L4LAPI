@@ -25,7 +25,7 @@ public interface LessonService {
 
     LessonDetailResponse findDetailById(UUID id);
 
-    List<LessonSummaryResponse> findByCategoryId(UUID categoryId);
+    List<LessonSummaryResponse> findByCategoryId(UUID categoryId, UUID userId);
 
     List<LessonSummaryResponse> findByLevel(JlptLevel level);
 

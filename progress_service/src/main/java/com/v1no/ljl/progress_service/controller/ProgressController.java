@@ -92,4 +92,15 @@ public class ProgressController {
             ApiResponse.ok(progressService.getUserProgressByStatus(userId, status))
         );
     }
+
+    @GetMapping("/users/{userId}/lessons")
+    @Operation(summary = "Bulk get progress theo danh sách lessonId")
+    public ResponseEntity<ApiResponse<List<LessonProgressResponse>>> getProgressByLessonIds(
+        @PathVariable UUID userId,
+        @RequestParam List<UUID> lessonIds
+    ) {
+        return ResponseEntity.ok(
+            ApiResponse.ok(progressService.getProgressByLessonIds(userId, lessonIds))
+        );
+    }
 }

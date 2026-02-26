@@ -19,4 +19,6 @@ public interface ProgressService {
     List<LessonProgressResponse> getUserProgress(UUID userId);
 
     List<LessonProgressResponse> getUserProgressByStatus(UUID userId, LessonStatus status);
+
+    List<LessonProgressResponse> getProgressByLessonIds(UUID userId, List<UUID> lessonIds);
 }

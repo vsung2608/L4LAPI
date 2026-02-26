@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
@@ -48,7 +49,7 @@ public class LessonMapper {
         lesson.setStatus(request.status());
     }
 
-    public LessonSummaryResponse toSummary(Lesson lesson) {
+    public LessonSummaryResponse toSummary(Lesson lesson, LessonProgressSummary progress) {
         return new LessonSummaryResponse(
             lesson.getId(),
             lesson.getCategory().getId(),
@@ -62,7 +63,8 @@ public class LessonMapper {
             lesson.getDisplayOrder(),
             lesson.getStatus(),
             lesson.getTotalSentences(),
-            lesson.getCreatedAt()
+            lesson.getCreatedAt(),
+            progress
         );
     }
 

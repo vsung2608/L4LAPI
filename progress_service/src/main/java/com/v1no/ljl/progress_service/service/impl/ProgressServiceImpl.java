@@ -109,4 +109,16 @@ public class ProgressServiceImpl implements ProgressService {
                 "Progress not found: userId=" + userId + ", lessonId=" + lessonId
             ));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LessonProgressResponse> getProgressByLessonIds(
+        UUID userId,
+        List<UUID> lessonIds
+    ) {
+        return progressRepository.findAllByUserIdAndLessonIdIn(userId, lessonIds)
+            .stream()
+            .map(progressMapper::toResponse)
+            .toList();
+    }
 }

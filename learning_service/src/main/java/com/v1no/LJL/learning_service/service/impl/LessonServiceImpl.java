@@ -1,14 +1,19 @@
 package com.v1no.LJL.learning_service.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.LJL.common.dto.PageResponse;
+import com.v1no.LJL.learning_service.client.ProgressServiceClient;
 import com.v1no.LJL.learning_service.exception.BusinessException;
 import com.v1no.LJL.learning_service.exception.ResourceNotFoundException;
 import com.v1no.LJL.learning_service.mapper.LessonMapper;
@@ -37,6 +42,7 @@ public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
     private final CategoryRepository categoryRepository;
     private final LessonMapper lessonMapper;
+    private final ProgressServiceClient progressServiceClient;
 
     @Override
     public LessonSummaryResponse create(CreateLessonRequest request) {
@@ -51,7 +57,7 @@ public class LessonServiceImpl implements LessonService {
         Lesson saved = lessonRepository.save(lessonMapper.toEntity(request, category, videoId, thumbnailUrl, videoDuration));
 
         log.info("Lesson created: id={}", saved.getId());
-        return lessonMapper.toSummary(saved);
+        return lessonMapper.toSummary(saved, null);
     }
 
     @Override
@@ -65,7 +71,7 @@ public class LessonServiceImpl implements LessonService {
         Lesson saved = lessonRepository.save(lesson);
 
         log.info("Lesson updated: id={}", saved.getId());
-        return lessonMapper.toSummary(saved);
+        return lessonMapper.toSummary(saved, null);
     }
 
     @Override
@@ -87,7 +93,7 @@ public class LessonServiceImpl implements LessonService {
     public LessonSummaryResponse findById(UUID id) {
         Lesson lesson = lessonRepository.findByIdWithCategory(id)
             .orElseThrow(() -> new ResourceNotFoundException("Lesson not found: " + id));
-        return lessonMapper.toSummary(lesson);
+        return lessonMapper.toSummary(lesson, null);
     }
 
     @Override
@@ -100,14 +106,32 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LessonSummaryResponse> findByCategoryId(UUID categoryId) {
-        // Validate category tồn tại trước
+    public List<LessonSummaryResponse> findByCategoryId(UUID categoryId, UUID userId) {
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException("Category not found: " + categoryId);
         }
-        return lessonRepository.findAllByCategoryIdAndStatus(categoryId, ContentStatus.ACTIVE)
+
+        List<Lesson> lessons = lessonRepository
+            .findAllByCategoryIdAndStatus(categoryId, ContentStatus.ACTIVE);
+
+        if (lessons.isEmpty()) return List.of();
+
+        // Bulk fetch progress — 1 call duy nhất, không N+1
+        List<UUID> lessonIds = lessons.stream()
+            .map(Lesson::getId)
+            .toList();
+
+        Map<UUID, LessonProgressSummary> progressMap = progressServiceClient
+            .getProgressByLessonIds(userId, lessonIds)
+            .getData()
             .stream()
-            .map(lessonMapper::toSummary)
+            .collect(Collectors.toMap(LessonProgressSummary::lessonId, Function.identity()));
+
+        return lessons.stream()
+            .map(lesson -> lessonMapper.toSummary(
+                lesson,
+                progressMap.get(lesson.getId())
+            ))
             .toList();
     }
 
@@ -116,7 +140,7 @@ public class LessonServiceImpl implements LessonService {
     public List<LessonSummaryResponse> findByLevel(JlptLevel level) {
         return lessonRepository.findActiveByLevelWithCategory(level)
             .stream()
-            .map(lessonMapper::toSummary)
+            .map(lesson -> lessonMapper.toSummary(lesson, null))
             .toList();
     }
 
@@ -125,7 +149,7 @@ public class LessonServiceImpl implements LessonService {
     public PageResponse<LessonSummaryResponse> findAll(Pageable pageable) {
         Page<Lesson> page = lessonRepository.findAllActive(pageable);
         return PageResponse.<LessonSummaryResponse>builder()
-            .data(page.getContent().stream().map(lessonMapper::toSummary).toList())
+            .data(page.getContent().stream().map(lesson -> lessonMapper.toSummary(lesson, null)).toList())
             .totalElements(page.getTotalElements())
             .totalPages(page.getTotalPages())
             .page(page.getNumber())

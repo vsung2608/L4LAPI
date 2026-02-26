@@ -20,6 +20,8 @@ public interface UserLessonProgressRepository extends JpaRepository<UserLessonPr
 
     List<UserLessonProgress> findAllByUserIdOrderByLastAccessedAtDesc(UUID userId);
 
+    boolean existsByUserIdAndLessonId(UUID userId, UUID lessonId);
+
     @Query("""
         SELECT p FROM UserLessonProgress p
         WHERE p.userId = :userId AND p.status = :status
@@ -30,5 +32,13 @@ public interface UserLessonProgressRepository extends JpaRepository<UserLessonPr
         @Param("status") LessonStatus status
     );
 
-    boolean existsByUserIdAndLessonId(UUID userId, UUID lessonId);
+    @Query("""
+        SELECT p FROM UserLessonProgress p
+        WHERE p.userId = :userId
+        AND p.lessonId IN :lessonIds
+        """)
+    List<UserLessonProgress> findAllByUserIdAndLessonIdIn(
+        @Param("userId") UUID userId,
+        @Param("lessonIds") List<UUID> lessonIds
+    );
 }

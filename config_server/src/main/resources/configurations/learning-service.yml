@@ -1,6 +1,23 @@
 server:
   port: 8081
 
+progress-service:
+  base-url: http://progress-service
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      progressService:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        register-health-indicator: true
+  timelimiter:
+    instances:
+      progressService:
+        timeout-duration: 2s
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/learning_service_db

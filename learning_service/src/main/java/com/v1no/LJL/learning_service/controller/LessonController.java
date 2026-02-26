@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.v1no.LJL.common.dto.ApiResponse;
@@ -89,9 +90,10 @@ public class LessonController {
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "Get all active lessons by category")
     public ResponseEntity<ApiResponse<List<LessonSummaryResponse>>> findByCategoryId(
-        @PathVariable UUID categoryId
+        @PathVariable UUID categoryId,
+        @RequestParam UUID userId
     ) {
-        return ResponseEntity.ok(ApiResponse.ok(lessonService.findByCategoryId(categoryId)));
+        return ResponseEntity.ok(ApiResponse.ok(lessonService.findByCategoryId(categoryId, userId)));
     }
 
     @GetMapping("/level/{level}")
