@@ -5,6 +5,9 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.v1no.LJL.user_service.model.enums.ProfileVisibility;
+import com.v1no.LJL.user_service.model.enums.Theme;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -87,16 +90,4 @@ public class UserSettings {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public enum ProfileVisibility {
-        PUBLIC,
-        FRIENDS,
-        PRIVATE
-    }
-
-    public enum Theme {
-        LIGHT,
-        DARK,
-        AUTO
-    }
 }

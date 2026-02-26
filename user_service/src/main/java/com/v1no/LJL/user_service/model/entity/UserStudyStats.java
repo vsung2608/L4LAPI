@@ -30,7 +30,6 @@ public class UserStudyStats {
     @JoinColumn(name = "user_id")
     private UserProfile userProfile;
 
-    // Overall stats
     @Column(name = "total_study_time_minutes")
     @Builder.Default
     private Integer totalStudyTimeMinutes = 0;
@@ -47,7 +46,6 @@ public class UserStudyStats {
     @Builder.Default
     private Integer totalWordsLearned = 0;
 
-    // Current streak
     @Column(name = "current_streak_days")
     @Builder.Default
     private Integer currentStreakDays = 0;
@@ -59,7 +57,6 @@ public class UserStudyStats {
     @Column(name = "last_study_date")
     private LocalDate lastStudyDate;
 
-    // Level progress
     @Column(name = "current_level", length = 20)
     @Builder.Default
     private String currentLevel = "N5";
@@ -68,7 +65,6 @@ public class UserStudyStats {
     @Builder.Default
     private BigDecimal levelProgressPercent = BigDecimal.ZERO;
 
-    // Weekly stats
     @Column(name = "weekly_study_minutes")
     @Builder.Default
     private Integer weeklyStudyMinutes = 0;

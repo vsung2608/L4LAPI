@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.v1no.LJL.user_service.model.enums.ActivityType;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -48,15 +50,6 @@ public class StudySession {
     @Column(name = "points_earned")
     @Builder.Default
     private Integer pointsEarned = 0;
-
-    public enum ActivityType {
-        VOCABULARY,
-        SPELLING,
-        SHADOWING,
-        READING,
-        GRAMMAR,
-        LISTENING
-    }
 
     public void endSession() {
         this.endedAt = LocalDateTime.now();

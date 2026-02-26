@@ -23,6 +23,7 @@
 		<module>learning_service</module>
 		<module>analytics_service</module>
 		<module>user_service</module>
+		<module>progress_service</module>
 		<module>notification_service</module>
 	</modules>
 	<name>LJL</name>

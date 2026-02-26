@@ -5,6 +5,9 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.v1no.LJL.user_service.model.enums.Gender;
+import com.v1no.LJL.user_service.model.enums.JLPTLevel;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,7 +40,7 @@ import java.util.UUID;
 public class UserProfile {
 
     @Id
-    private UUID id; // Same as auth.users_credentials.id
+    private UUID id;
 
     @Column(name = "display_name", length = 100)
     private String displayName;
@@ -81,15 +84,4 @@ public class UserProfile {
 
     @OneToOne(mappedBy = "userProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private UserStudyStats studyStats;
-
-    public enum Gender {
-        MALE,
-        FEMALE,
-        OTHER,
-        PREFER_NOT_TO_SAY
-    }
-
-    public enum JLPTLevel {
-        N5, N4, N3, N2, N1
-    }
 }
