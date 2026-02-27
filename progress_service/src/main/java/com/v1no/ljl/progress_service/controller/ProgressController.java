@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.v1no.LJL.common.dto.ApiResponse;
+import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.ljl.progress_service.model.dto.request.StartLessonRequest;
 import com.v1no.ljl.progress_service.model.dto.request.UpdateProgressRequest;
 import com.v1no.ljl.progress_service.model.dto.response.LessonProgressResponse;
+import com.v1no.ljl.progress_service.model.enums.LearningMode;
 import com.v1no.ljl.progress_service.model.enums.LessonStatus;
 import com.v1no.ljl.progress_service.service.ProgressService;
 
@@ -53,11 +55,12 @@ public class ProgressController {
     public ResponseEntity<ApiResponse<LessonProgressResponse>> updateProgress(
         @RequestParam UUID userId,
         @RequestParam UUID lessonId,
+        @RequestParam LearningMode mode, 
         @Valid @RequestBody UpdateProgressRequest request
     ) {
-        log.info("PATCH /api/v1/progress/lessons - userId={}, lessonId={}", userId, lessonId);
+        log.info("PATCH /api/v1/progress/lessons - userId={}, lessonId={}, mode={}", userId, lessonId, mode);
         return ResponseEntity.ok(
-            ApiResponse.ok(progressService.updateProgress(userId, lessonId, request))
+            ApiResponse.ok(progressService.updateProgress(userId, lessonId, mode, request))
         );
     }
 
@@ -95,7 +98,7 @@ public class ProgressController {
 
     @GetMapping("/users/{userId}/lessons")
     @Operation(summary = "Bulk get progress theo danh sách lessonId")
-    public ResponseEntity<ApiResponse<List<LessonProgressResponse>>> getProgressByLessonIds(
+    public ResponseEntity<ApiResponse<List<LessonProgressSummary>>> getProgressByLessonIds(
         @PathVariable UUID userId,
         @RequestParam List<UUID> lessonIds
     ) {

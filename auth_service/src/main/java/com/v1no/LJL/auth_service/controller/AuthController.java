@@ -26,13 +26,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<String>> register(@RequestBody @Valid RegisterRequest request) {
-        var response = authService.register(request);
-        return ResponseEntity.ok(response);
+        authService.register(request);
+        return ResponseEntity.ok(ApiResponse.created("Registration successful. Please check your email for verification instructions."));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
-        var response = authService.authenticate(request);
+        var response = authService.login(request);
         return ResponseEntity.ok(response);
     }
 
@@ -43,16 +43,16 @@ public class AuthController {
         return ResponseEntity.ok("Logout successful");
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshTokenRequest refreshToken) {
-        return ResponseEntity.ok(authService.refresh(refreshToken));
-    }
+    // @PostMapping("/refresh")
+    // public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshTokenRequest refreshToken) {
+    //     return ResponseEntity.ok(authService.refresh(refreshToken));
+    // }
 
-    @PostMapping("/activate")
-    public ResponseEntity<String> activation(@RequestParam("code") String code) {
-        authService.activationAccount(code);
-        return ResponseEntity.ok("Activation successful");
-    }
+    // @PostMapping("/activate")
+    // public ResponseEntity<String> activation(@RequestParam("code") String code) {
+    //     authService.activationAccount(code);
+    //     return ResponseEntity.ok("Activation successful");
+    // }
 
     private String extractTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

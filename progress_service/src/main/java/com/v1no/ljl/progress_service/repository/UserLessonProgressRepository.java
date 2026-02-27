@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.v1no.ljl.progress_service.model.entity.UserLessonProgress;
+import com.v1no.ljl.progress_service.model.enums.LearningMode;
 import com.v1no.ljl.progress_service.model.enums.LessonStatus;
 
 import feign.Param;
@@ -16,11 +17,13 @@ import feign.Param;
 @Repository
 public interface UserLessonProgressRepository extends JpaRepository<UserLessonProgress, UUID> {
 
-    Optional<UserLessonProgress> findByUserIdAndLessonId(UUID userId, UUID lessonId);
+    Optional<UserLessonProgress> findByUserIdAndLessonIdAndMode(
+        UUID userId, UUID lessonId, LearningMode mode
+    );
+
+    List<UserLessonProgress> findAllByUserIdAndLessonId(UUID userId, UUID lessonId);
 
     List<UserLessonProgress> findAllByUserIdOrderByLastAccessedAtDesc(UUID userId);
-
-    boolean existsByUserIdAndLessonId(UUID userId, UUID lessonId);
 
     @Query("""
         SELECT p FROM UserLessonProgress p
@@ -35,10 +38,12 @@ public interface UserLessonProgressRepository extends JpaRepository<UserLessonPr
     @Query("""
         SELECT p FROM UserLessonProgress p
         WHERE p.userId = :userId
-        AND p.lessonId IN :lessonIds
+          AND p.lessonId IN :lessonIds
         """)
     List<UserLessonProgress> findAllByUserIdAndLessonIdIn(
         @Param("userId") UUID userId,
         @Param("lessonIds") List<UUID> lessonIds
     );
+
+    boolean existsByUserIdAndLessonIdAndMode(UUID userId, UUID lessonId, LearningMode mode);
 }

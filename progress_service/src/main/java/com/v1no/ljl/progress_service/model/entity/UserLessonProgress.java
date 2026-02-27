@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.v1no.ljl.progress_service.model.enums.LearningMode;
 import com.v1no.ljl.progress_service.model.enums.LessonStatus;
 
 import jakarta.persistence.*;
@@ -52,6 +53,10 @@ public class UserLessonProgress {
     @Column(name = "current_sentence_index", nullable = false)
     @Builder.Default
     private Integer currentSentenceIndex = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mode", nullable = false, length = 20)
+    private LearningMode mode;
 
     @CreationTimestamp
     @Column(name = "started_at", nullable = false, updatable = false)

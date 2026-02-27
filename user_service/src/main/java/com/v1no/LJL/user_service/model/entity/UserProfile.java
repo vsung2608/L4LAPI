@@ -5,11 +5,13 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.v1no.LJL.user_service.custom.StringMapConverter;
 import com.v1no.LJL.user_service.model.enums.Gender;
-import com.v1no.LJL.user_service.model.enums.JLPTLevel;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -62,10 +64,10 @@ public class UserProfile {
     @Builder.Default
     private String nativeLanguage = "vi";
 
-    @Column(name = "current_level", length = 20)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = StringMapConverter.class)
+    @Column(name = "current_levels", columnDefinition = "jsonb")
     @Builder.Default
-    private JLPTLevel currentLevel = JLPTLevel.N5;
+    private Map<String, String> currentLevels = new HashMap<>();
 
     @Column(length = 50)
     @Builder.Default

@@ -2,10 +2,12 @@ package com.v1no.ljl.progress_service.service.impl;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.LJL.common.exception.BusinessException;
 import com.v1no.LJL.common.exception.ResourceNotFoundException;
 import com.v1no.ljl.progress_service.mapper.ProgressMapper;
@@ -13,6 +15,7 @@ import com.v1no.ljl.progress_service.model.dto.request.StartLessonRequest;
 import com.v1no.ljl.progress_service.model.dto.request.UpdateProgressRequest;
 import com.v1no.ljl.progress_service.model.dto.response.LessonProgressResponse;
 import com.v1no.ljl.progress_service.model.entity.UserLessonProgress;
+import com.v1no.ljl.progress_service.model.enums.LearningMode;
 import com.v1no.ljl.progress_service.model.enums.LessonStatus;
 import com.v1no.ljl.progress_service.repository.UserLessonProgressRepository;
 import com.v1no.ljl.progress_service.service.ProgressService;
@@ -31,33 +34,35 @@ public class ProgressServiceImpl implements ProgressService {
 
     @Override
     public LessonProgressResponse startLesson(StartLessonRequest request) {
-        log.info("Starting lesson: userId={}, lessonId={}", request.userId(), request.lessonId());
+        log.info("Starting lesson: userId={}, lessonId={}, mode={}",
+            request.userId(), request.lessonId(), request.mode());
 
         return progressRepository
-            .findByUserIdAndLessonId(request.userId(), request.lessonId())
+            .findByUserIdAndLessonIdAndMode(request.userId(), request.lessonId(), request.mode())
             .map(existing -> {
-                log.info("Progress already exists, returning: id={}", existing.getId());
+                log.info("Progress already exists: id={}", existing.getId());
                 return progressMapper.toResponse(existing);
             })
             .orElseGet(() -> {
                 UserLessonProgress saved = progressRepository.save(
                     progressMapper.toEntity(request)
                 );
-                log.info("Lesson progress created: id={}", saved.getId());
+                log.info("Progress created: id={}", saved.getId());
                 return progressMapper.toResponse(saved);
             });
     }
 
     @Override
     public LessonProgressResponse updateProgress(
-        UUID userId,
-        UUID lessonId,
+        UUID userId, UUID lessonId, LearningMode mode,
         UpdateProgressRequest request
     ) {
-        log.info("Updating progress: userId={}, lessonId={}, sentenceIndex={}, status={}",
-            userId, lessonId, request.currentSentenceIndex(), request.status());
-
-        UserLessonProgress progress = findByUserAndLesson(userId, lessonId);
+        UserLessonProgress progress = progressRepository
+            .findByUserIdAndLessonIdAndMode(userId, lessonId, mode)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "Progress not found: userId=%s, lessonId=%s, mode=%s"
+                    .formatted(userId, lessonId, mode)
+            ));
 
         if (progress.isCompleted()) {
             throw new BusinessException("Cannot update a completed lesson progress");
@@ -69,8 +74,7 @@ public class ProgressServiceImpl implements ProgressService {
             progress.complete();
         }
 
-        UserLessonProgress saved = progressRepository.save(progress);
-        return progressMapper.toResponse(saved);
+        return progressMapper.toResponse(progressRepository.save(progress));
     }
 
     @Override
@@ -102,23 +106,30 @@ public class ProgressServiceImpl implements ProgressService {
             .toList();
     }
 
-    private UserLessonProgress findByUserAndLesson(UUID userId, UUID lessonId) {
+     private UserLessonProgress findByUserAndLesson(UUID userId, UUID lessonId) {
         return progressRepository
-            .findByUserIdAndLessonId(userId, lessonId)
+            .findAllByUserIdAndLessonId(userId, lessonId)
+            .stream()
+            .findFirst()
             .orElseThrow(() -> new ResourceNotFoundException(
-                "Progress not found: userId=" + userId + ", lessonId=" + lessonId
+                "Progress not found for userId=%s and lessonId=%s"
+                    .formatted(userId, lessonId)
             ));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<LessonProgressResponse> getProgressByLessonIds(
-        UUID userId,
-        List<UUID> lessonIds
+    public List<LessonProgressSummary> getProgressByLessonIds(
+        UUID userId, List<UUID> lessonIds
     ) {
-        return progressRepository.findAllByUserIdAndLessonIdIn(userId, lessonIds)
+        List<UserLessonProgress> all = progressRepository
+            .findAllByUserIdAndLessonIdIn(userId, lessonIds);
+
+        return all.stream()
+            .collect(Collectors.groupingBy(UserLessonProgress::getLessonId))
+            .entrySet()
             .stream()
-            .map(progressMapper::toResponse)
+            .map(entry -> progressMapper.toSummary(entry.getKey(), entry.getValue()))
             .toList();
     }
 }

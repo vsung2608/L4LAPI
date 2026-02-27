@@ -2,8 +2,6 @@ package com.v1no.LJL.learning_service.model.dto.request;
 
 import java.util.UUID;
 
-import com.v1no.LJL.learning_service.model.enums.JlptLevel;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +22,7 @@ public record CreateLessonRequest(
     String youtubeVideoUrl,
 
     @NotNull(message = "Level is required")
-    JlptLevel level,
+    String level,
 
     @NotNull(message = "Display order is required")
     @Min(value = 0, message = "Display order must be >= 0")

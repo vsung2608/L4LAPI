@@ -30,7 +30,7 @@ public record UpdateLessonRequest(
     Integer durationSeconds,
 
     @NotNull(message = "Level is required")
-    JlptLevel level,
+    String level,
 
     @NotNull(message = "Display order is required")
     @Min(value = 0, message = "Display order must be >= 0")

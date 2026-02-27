@@ -14,29 +14,23 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "categories",
+    indexes = {
+        @Index(name = "idx_category_language_code", columnList = "language_code"),
+        @Index(name = "idx_category_status",        columnList = "status")
+    }
+)
 @NamedEntityGraphs({
+    @NamedEntityGraph(name = "Category.simple"),
     @NamedEntityGraph(
-        name = "Category.simple"
+        name = "Category.withLanguage",
+        attributeNodes = @NamedAttributeNode("language")
     ),
     @NamedEntityGraph(
         name = "Category.withLessons",
         attributeNodes = {
+            @NamedAttributeNode("language"),
             @NamedAttributeNode("lessons")
-        }
-    ),
-    @NamedEntityGraph(
-        name = "Category.withLessonsAndSentences",
-        attributeNodes = {
-            @NamedAttributeNode(value = "lessons", subgraph = "lessons.withSentences")
-        },
-        subgraphs = {
-            @NamedSubgraph(
-                name = "lessons.withSentences",
-                attributeNodes = {
-                    @NamedAttributeNode("sentences")
-                }
-            )
         }
     )
 })
@@ -51,6 +45,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "language_code", nullable = false)
+    private Language language;
 
     @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;

@@ -1,10 +1,12 @@
 package com.v1no.LJL.learning_service.client.fallback;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
 import com.v1no.LJL.common.dto.ApiResponse;
+import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.LJL.learning_service.client.ProgressServiceClient;
 
 import lombok.extern.slf4j.Slf4j;

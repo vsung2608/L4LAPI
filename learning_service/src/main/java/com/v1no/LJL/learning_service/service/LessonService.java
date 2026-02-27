@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
+import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.enums.JlptLevel;
@@ -30,4 +31,6 @@ public interface LessonService {
     List<LessonSummaryResponse> findByLevel(JlptLevel level);
 
     PageResponse<LessonSummaryResponse> findAll(Pageable pageable);
+
+    LanguageCatalogResponse getCatalogByLanguage(String languageCode, UUID userId);
 }

@@ -5,12 +5,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.LJL.learning_service.model.dto.request.CreateCategoryRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateCategoryRequest;
 import com.v1no.LJL.learning_service.model.dto.response.CategoryDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.CategorySummaryResponse;
+import com.v1no.LJL.learning_service.model.dto.response.CategoryWithLessonsResponse;
+import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.entity.Category;
+import com.v1no.LJL.learning_service.model.entity.Lesson;
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
 
 @Component
@@ -55,7 +59,7 @@ public class CategoryMapper {
     public CategoryDetailResponse toDetail(Category category) {
         List<LessonSummaryResponse> lessons = category.getLessons()
             .stream()
-            .map(lessonMapper::toSummary)
+            .map(lesson -> lessonMapper.toSummary(lesson, null))
             .toList();
 
         return new CategoryDetailResponse(
@@ -68,6 +72,20 @@ public class CategoryMapper {
             lessons,
             category.getCreatedAt(),
             category.getUpdatedAt()
+        );
+    }
+
+    public CategoryWithLessonsResponse toCategoryWithLessons(
+        Category category,
+        List<LessonPreviewResponse> lessons
+    ) {
+        return new CategoryWithLessonsResponse(
+            category.getId(),
+            category.getName(),
+            category.getDescription(),
+            category.getThumbnailUrl(),
+            category.getDisplayOrder(),
+            lessons
         );
     }
 }

@@ -2,9 +2,6 @@ package com.v1no.LJL.auth_service.service.impl;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +17,6 @@ import com.v1no.LJL.auth_service.exception.InvalidTokenException;
 import com.v1no.LJL.auth_service.model.dto.request.LoginRequest;
 import com.v1no.LJL.auth_service.model.dto.request.RegisterRequest;
 import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
-import com.v1no.LJL.auth_service.model.entity.PasswordResetToken;
 import com.v1no.LJL.auth_service.model.entity.RefreshToken;
 import com.v1no.LJL.auth_service.model.entity.UserCredential;
 import com.v1no.LJL.auth_service.model.enums.Role;

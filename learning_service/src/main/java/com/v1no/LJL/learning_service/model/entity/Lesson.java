@@ -74,9 +74,8 @@ public class Lesson {
     @Column(name = "duration_seconds")
     private Integer durationSeconds;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "level", nullable = false, length = 20)
-    private JlptLevel level;
+    private String level;
 
     @Column(name = "display_order", nullable = false)
     @Builder.Default

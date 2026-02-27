@@ -14,18 +14,25 @@ import org.springframework.transaction.annotation.Transactional;
 import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.learning_service.client.ProgressServiceClient;
+import com.v1no.LJL.learning_service.custom.validate.LevelValidator;
 import com.v1no.LJL.learning_service.exception.BusinessException;
 import com.v1no.LJL.learning_service.exception.ResourceNotFoundException;
+import com.v1no.LJL.learning_service.mapper.CategoryMapper;
 import com.v1no.LJL.learning_service.mapper.LessonMapper;
 import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
+import com.v1no.LJL.learning_service.model.dto.response.CategoryWithLessonsResponse;
+import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
+import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.entity.Category;
+import com.v1no.LJL.learning_service.model.entity.Language;
 import com.v1no.LJL.learning_service.model.entity.Lesson;
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
 import com.v1no.LJL.learning_service.model.enums.JlptLevel;
 import com.v1no.LJL.learning_service.repository.CategoryRepository;
+import com.v1no.LJL.learning_service.repository.LanguageRepository;
 import com.v1no.LJL.learning_service.repository.LessonRepository;
 import com.v1no.LJL.learning_service.service.LessonService;
 import com.v1no.LJL.learning_service.util.YoutubeUtil;
@@ -38,11 +45,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional
 public class LessonServiceImpl implements LessonService {
+    private static final int PREVIEW_LESSON_LIMIT = 5;
 
     private final LessonRepository lessonRepository;
     private final CategoryRepository categoryRepository;
+    private final LanguageRepository languageRepository;
+    private final CategoryMapper categoryMapper;
     private final LessonMapper lessonMapper;
     private final ProgressServiceClient progressServiceClient;
+    private final LevelValidator levelValidator;
 
     @Override
     public LessonSummaryResponse create(CreateLessonRequest request) {
@@ -53,6 +64,8 @@ public class LessonServiceImpl implements LessonService {
         String videoId = YoutubeUtil.extractVideoId(request.youtubeVideoUrl());
         Integer videoDuration = YoutubeUtil.getVideoDurationInSeconds(videoId);
         String thumbnailUrl = YoutubeUtil.getThumbnailUrl(videoId);
+
+        levelValidator.validate(category.getLanguage().getCode(), request.level());
 
         Lesson saved = lessonRepository.save(lessonMapper.toEntity(request, category, videoId, thumbnailUrl, videoDuration));
 
@@ -155,6 +168,92 @@ public class LessonServiceImpl implements LessonService {
             .page(page.getNumber())
             .size(page.getSize())
             .build();
+    }
+
+    @Override
+    public LanguageCatalogResponse getCatalogByLanguage(String languageCode, UUID userId) {
+        log.info("Getting catalog: languageCode={}, userId={}", languageCode, userId);
+
+        Language language = languageRepository.findByCode(languageCode)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "Language not found: " + languageCode
+            ));
+
+        List<Category> categories = categoryRepository
+            .findActiveByLanguageCode(languageCode);
+
+        if (categories.isEmpty()) {
+            return new LanguageCatalogResponse(
+                language.getCode(),
+                language.getName(),
+                language.getNativeName(),
+                List.of()
+            );
+        }
+
+        List<UUID> categoryIds = categories.stream()
+            .map(Category::getId)
+            .toList();
+
+        List<Lesson> allLessons = lessonRepository.findActiveByCategoryIdIn(categoryIds);
+
+        Map<UUID, List<Lesson>> lessonsByCategoryId = allLessons.stream()
+            .collect(Collectors.groupingBy(
+                lesson -> lesson.getCategory().getId(),
+                Collectors.collectingAndThen(
+                    Collectors.toList(),
+                    list -> list.stream()
+                        .limit(PREVIEW_LESSON_LIMIT)
+                        .toList()
+                )
+            ));
+
+        List<UUID> lessonIds = allLessons.stream()
+            .map(Lesson::getId)
+            .toList();
+
+        Map<UUID, LessonProgressSummary> progressMap = fetchProgressMap(userId, lessonIds);
+
+        List<CategoryWithLessonsResponse> categoryResponses = categories.stream()
+            .map(category -> {
+                List<LessonPreviewResponse> lessonPreviews = lessonsByCategoryId
+                    .getOrDefault(category.getId(), List.of())
+                    .stream()
+                    .map(lesson -> lessonMapper.toPreview(
+                        lesson,
+                        progressMap.get(lesson.getId())
+                    ))
+                    .toList();
+
+                return categoryMapper.toCategoryWithLessons(category, lessonPreviews);
+            })
+            .toList();
+
+        return new LanguageCatalogResponse(
+            language.getCode(),
+            language.getName(),
+            language.getNativeName(),
+            categoryResponses
+        );
+    }
+
+    private Map<UUID, LessonProgressSummary> fetchProgressMap(
+        UUID userId, List<UUID> lessonIds
+    ) {
+        if (lessonIds.isEmpty()) return Map.of();
+        try {
+            return progressServiceClient
+                .getProgressByLessonIds(userId, lessonIds)
+                .getData()
+                .stream()
+                .collect(Collectors.toMap(
+                    LessonProgressSummary::lessonId,
+                    Function.identity()
+                ));
+        } catch (Exception e) {
+            log.warn("Failed to fetch progress, continuing without it: {}", e.getMessage());
+            return Map.of();
+        }
     }
 
     private Lesson findLessonById(UUID id) {

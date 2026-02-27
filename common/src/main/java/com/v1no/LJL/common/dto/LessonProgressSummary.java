@@ -5,7 +5,12 @@ import java.util.UUID;
 
 public record LessonProgressSummary(
     UUID lessonId,
-    String status,
-    Integer currentSentenceIndex,
-    LocalDateTime lastAccessedAt
-) {}
+    LessonProgressDetail dictation,
+    LessonProgressDetail speaking
+) {
+    public record LessonProgressDetail(
+        String status,
+        Integer currentSentenceIndex,
+        LocalDateTime lastAccessedAt
+    ) {}
+}

@@ -32,6 +32,9 @@ public class JwtService {
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
 
+    @Value("${application.security.jwt.refreshExpiration}")
+    private long refreshExpiration;
+
     @Value("${application.security.jwt.secret-key}")
     private String jwtSecretKey;
 
@@ -65,7 +68,7 @@ public class JwtService {
 
     public String generateRefreshToken(UserCredential userCredential) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("type", "REFRESH_TOKEN"); // Quan trọng: Refresh token không cần chứa Role để giảm tải payload
+        claims.put("type", "REFRESH_TOKEN");
         
         return buildToken(claims, userCredential, refreshExpiration);
     }

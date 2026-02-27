@@ -59,4 +59,13 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
         ORDER BY l.createdAt DESC
         """)
     Page<Lesson> findAllActive(Pageable pageable);
+
+    @EntityGraph(value = "Lesson.withCategory")
+    @Query("""
+        SELECT l FROM Lesson l
+        WHERE l.category.id IN :categoryIds
+        AND l.status = 'ACTIVE'
+        ORDER BY l.category.id ASC, l.displayOrder ASC
+        """)
+    List<Lesson> findActiveByCategoryIdIn(@Param("categoryIds") List<UUID> categoryIds);
 }

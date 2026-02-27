@@ -28,4 +28,13 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     @EntityGraph(value = "Category.withLessonsAndSentences")
     @Query("SELECT c FROM Category c WHERE c.id = :id")
     Optional<Category> findByIdWithLessonsAndSentences(@Param("id") UUID id);
+
+    @EntityGraph(value = "Category.withLanguage")
+    @Query("""
+        SELECT c FROM Category c
+        WHERE c.language.code = :languageCode
+        AND c.status = 'ACTIVE'
+        ORDER BY c.displayOrder ASC
+        """)
+    List<Category> findActiveByLanguageCode(@Param("languageCode") String languageCode);
 }

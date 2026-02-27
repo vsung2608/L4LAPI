@@ -1,5 +1,11 @@
 package com.v1no.LJL.auth_service.service;
 
-public interface AuthService {
+import com.v1no.LJL.auth_service.model.dto.request.LoginRequest;
+import com.v1no.LJL.auth_service.model.dto.request.RegisterRequest;
+import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
 
+public interface AuthService {
+    void register(RegisterRequest request);
+    AuthResponse login(LoginRequest request);
+    void logout(String rawToken);
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
-import com.v1no.LJL.learning_service.model.enums.JlptLevel;
 
 public record LessonDetailResponse(
     UUID id,
@@ -16,7 +15,7 @@ public record LessonDetailResponse(
     String thumbnailUrl,
     String youtubeVideoId,
     Integer durationSeconds,
-    JlptLevel level,
+    String level,
     Integer displayOrder,
     ContentStatus status,
     List<SentenceResponse> sentences,

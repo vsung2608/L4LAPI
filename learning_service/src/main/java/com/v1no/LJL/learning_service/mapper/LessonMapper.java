@@ -8,6 +8,7 @@ import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
+import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.dto.response.SentenceResponse;
 import com.v1no.LJL.learning_service.model.entity.Category;
@@ -89,6 +90,20 @@ public class LessonMapper {
             sentences,
             lesson.getCreatedAt(),
             lesson.getUpdatedAt()
+        );
+    }
+
+    public LessonPreviewResponse toPreview(Lesson lesson, LessonProgressSummary progress) {
+        return new LessonPreviewResponse(
+            lesson.getId(),
+            lesson.getTitle(),
+            lesson.getThumbnailUrl(),
+            lesson.getYoutubeVideoId(),
+            lesson.getDurationSeconds(),
+            lesson.getLevel(),
+            lesson.getDisplayOrder(),
+            lesson.getTotalSentences(),
+            progress
         );
     }
 }
