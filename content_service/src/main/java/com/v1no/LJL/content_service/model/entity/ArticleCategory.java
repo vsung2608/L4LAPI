@@ -4,6 +4,7 @@ package com.v1no.LJL.content_service.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,9 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "article_categories", indexes = {
-    @Index(name = "idx_article_cat_slug", columnList = "slug")
-})
+@Table(
+    name = "article_categories",
+    indexes = {
+        @Index(name = "idx_article_category_slug",   columnList = "slug"),
+        @Index(name = "idx_article_category_status", columnList = "status")
+    }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,35 +28,34 @@ public class ArticleCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "name_vi", nullable = false, unique = true, length = 100)
-    private String nameVi;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 
-    @Column(name = "name_en", length = 100)
-    private String nameEn;
-
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(name = "slug", nullable = false, unique = true, length = 100)
     private String slug;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", length = 500)
     private String description;
 
-    @Column(length = 100)
-    private String icon;
+    @Column(name = "thumbnail_url", length = 500)
+    private String thumbnailUrl;
 
-    @Column(name = "order_index", nullable = false)
-    private Integer orderIndex;
-
-    @Column(name = "is_active", nullable = false)
+    @Column(name = "display_order", nullable = false)
     @Builder.Default
-    private Boolean isActive = true;
+    private Integer displayOrder = 0;
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Article> articles = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Article> articles = new ArrayList<>();
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
