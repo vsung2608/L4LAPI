@@ -14,6 +14,7 @@ import com.v1no.LJL.learning_service.model.dto.response.SentenceResponse;
 import com.v1no.LJL.learning_service.model.entity.Category;
 import com.v1no.LJL.learning_service.model.entity.Lesson;
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
+import com.v1no.LJL.learning_service.model.dto.response.YoutubeVideoInfo;
 
 @Component
 public class LessonMapper {
@@ -24,14 +25,14 @@ public class LessonMapper {
         this.sentenceMapper = sentenceMapper;
     }
 
-    public Lesson toEntity(CreateLessonRequest request, Category category, String youtubeVideoId, String thumbnailurl, Integer durationSeconds) {
+    public Lesson toEntity(CreateLessonRequest request, Category category, String youtubeVideoId, YoutubeVideoInfo info) {
         return Lesson.builder()
             .category(category)
-            .title(request.title())
+            .title(info.title())
             .description(request.description())
-            .thumbnailUrl(thumbnailurl)
+            .thumbnailUrl(info.thumbnailUrl())
+            .durationSeconds(info.durationSeconds())
             .youtubeVideoId(youtubeVideoId)
-            .durationSeconds(durationSeconds)
             .level(request.level())
             .displayOrder(request.displayOrder())
             .status(ContentStatus.DRAFT)

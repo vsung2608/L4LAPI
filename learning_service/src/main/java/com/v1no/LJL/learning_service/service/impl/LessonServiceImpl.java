@@ -26,6 +26,7 @@ import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
+import com.v1no.LJL.learning_service.model.dto.response.YoutubeVideoInfo;
 import com.v1no.LJL.learning_service.model.entity.Category;
 import com.v1no.LJL.learning_service.model.entity.Language;
 import com.v1no.LJL.learning_service.model.entity.Lesson;
@@ -57,17 +58,16 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public LessonSummaryResponse create(CreateLessonRequest request) {
-        log.info("Creating lesson: title={}, categoryId={}", request.title(), request.categoryId());
+        log.info("Creating lesson: categoryId={}", request.categoryId());
 
         Category category = findCategoryById(request.categoryId());
 
         String videoId = YoutubeUtil.extractVideoId(request.youtubeVideoUrl());
-        Integer videoDuration = YoutubeUtil.getVideoDurationInSeconds(videoId);
-        String thumbnailUrl = YoutubeUtil.getThumbnailUrl(videoId);
+        YoutubeVideoInfo info = YoutubeUtil.getVideoInfo(videoId);
 
         levelValidator.validate(category.getLanguage().getCode(), request.level());
 
-        Lesson saved = lessonRepository.save(lessonMapper.toEntity(request, category, videoId, thumbnailUrl, videoDuration));
+        Lesson saved = lessonRepository.save(lessonMapper.toEntity(request, category, videoId, info));
 
         log.info("Lesson created: id={}", saved.getId());
         return lessonMapper.toSummary(saved, null);

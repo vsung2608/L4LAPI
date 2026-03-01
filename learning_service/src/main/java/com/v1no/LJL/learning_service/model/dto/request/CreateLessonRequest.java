@@ -3,17 +3,12 @@ package com.v1no.LJL.learning_service.model.dto.request;
 import java.util.UUID;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CreateLessonRequest(
     @NotNull(message = "Category is required")
     UUID categoryId,
-
-    @NotBlank(message = "Title is required")
-    @Size(max = 255, message = "Title must not exceed 255 characters")
-    String title,
 
     @Size(max = 1000, message = "Description must not exceed 1000 characters")
     String description,
