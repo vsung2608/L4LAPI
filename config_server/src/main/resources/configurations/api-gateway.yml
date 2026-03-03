@@ -1,3 +1,131 @@
+server:
+  port: 8222
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bookhaven
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        ## Auth Service Route
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/v1/auth/**
+        ## Auth Service Swagger Route
+        - id: auth-service-swagger
+          uri: http://localhost:8080
+          predicates:
+            - Path=/aggregate/auth-service/v3/api-docs
+          filters:
+            - SetPath=/api-docs
+
+        ## User Service Route
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/v1/users/**, /api/v1/users
+        ## User Service Swagger Route
+        - id: user-service-swagger
+          uri: http://localhost:8070
+          predicates:
+            - Path=/aggregate/user-service/v3/api-docs
+          filters:
+            - SetPath=/api-docs
+
+        ## Learning Service Route
+        - id: learning-service
+          uri: lb://learning-service
+          predicates:
+            - Path=/api/v1/learnings/**, /api/v1/learnings
+        ## Learning Service Swagger Route
+        - id: learning-service-swagger
+          uri: http://localhost:8090
+          predicates:
+            - Path=/aggregate/learning-service/v3/api-docs
+          filters:
+            - SetPath=/api-docs
+
+        ## Auth Service Route
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/v1/auth/**
+        ## Discovery Server Route
+        - id: discovery-server
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        ## Discovery Server Route Static Source
+        - id: discovery-server-static
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+
+springdoc:
+  swagger-ui:
+    enable: true
+    path: /swagger-ui.html
+    urls:
+      - name: User Service
+        url: /aggregate/user-service/v3/api-docs
+      - name: Learning Service
+        url: /aggregate/learning-service/v3/api-docs
+#      - name: Payment Service
+#        url: /aggregate/payment-service/v3/api/docs
+  api-docs:
+    enable: true
+    path: /api-docs
+
+resilience4j:
+  ## Inventory CircuitBreaker Properties
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        event-consumer-buffer-size: 10
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+  ##  Inventory CircuitBreaker Timeout Properties
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s
+  ## Inventory CircuitBreaker Retry Properties
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 5s
+
 logging:
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%thread]){cyan} %clr(%logger{36}){yellow} %clr([%file:%line]){magenta} - %msg%n"
