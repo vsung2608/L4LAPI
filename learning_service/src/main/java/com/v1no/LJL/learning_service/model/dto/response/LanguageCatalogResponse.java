@@ -4,7 +4,5 @@ import java.util.List;
 
 public record LanguageCatalogResponse(
     String languageCode,
-    String languageName,
-    String nativeName,
     List<CategoryWithLessonsResponse> categories
 ) {}

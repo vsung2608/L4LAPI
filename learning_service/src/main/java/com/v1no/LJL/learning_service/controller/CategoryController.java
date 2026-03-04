@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.v1no.LJL.common.dto.ApiResponse;
@@ -85,5 +86,13 @@ public class CategoryController {
     @Operation(summary = "Get all active categories")
     public ResponseEntity<ApiResponse<List<CategorySummaryResponse>>> findAll() {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.findAll()));
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all active categories by language")
+    public ResponseEntity<ApiResponse<List<CategorySummaryResponse>>> findByLanguage(
+        @RequestParam String languageCode
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(categoryService.findByLanguageCode(languageCode)));
     }
 }

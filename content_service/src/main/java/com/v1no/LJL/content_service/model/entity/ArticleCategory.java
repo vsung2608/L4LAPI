@@ -37,12 +37,6 @@ public class ArticleCategory {
     @Column(name = "slug", nullable = false, unique = true, length = 100)
     private String slug;
 
-    @Column(name = "description", length = 500)
-    private String description;
-
-    @Column(name = "thumbnail_url", length = 500)
-    private String thumbnailUrl;
-
     @Column(name = "display_order", nullable = false)
     @Builder.Default
     private Integer displayOrder = 0;

@@ -14,8 +14,6 @@ public class ArticleCategoryMapper {
         return ArticleCategory.builder()
             .name(request.name())
             .slug(request.slug())
-            .description(request.description())
-            .thumbnailUrl(request.thumbnailUrl())
             .displayOrder(request.displayOrder())
             .build();
     }
@@ -23,8 +21,6 @@ public class ArticleCategoryMapper {
     public void updateEntity(ArticleCategory category, UpdateArticleCategoryRequest request) {
         category.setName(request.name());
         category.setSlug(request.slug());
-        category.setDescription(request.description());
-        category.setThumbnailUrl(request.thumbnailUrl());
         category.setDisplayOrder(request.displayOrder());
     }
 
@@ -33,8 +29,6 @@ public class ArticleCategoryMapper {
             category.getId(),
             category.getName(),
             category.getSlug(),
-            category.getDescription(),
-            category.getThumbnailUrl(),
             category.getDisplayOrder(),
             category.getCreatedAt(),
             category.getUpdatedAt()

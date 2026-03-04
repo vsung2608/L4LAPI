@@ -7,8 +7,6 @@ public record ArticleCategoryResponse(
     UUID id,
     String name,
     String slug,
-    String description,
-    String thumbnailUrl,
     Integer displayOrder,
     LocalDateTime createdAt,
     LocalDateTime updatedAt

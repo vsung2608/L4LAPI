@@ -47,7 +47,7 @@ public class LessonController {
     public ResponseEntity<ApiResponse<LessonSummaryResponse>> create(
         @Valid @RequestBody CreateLessonRequest request
     ) {
-        log.info("POST /api/v1/lessons - title={}, categoryId={}", request.title(), request.categoryId());
+        log.info("POST /api/v1/lessons - categoryId={}", request.categoryId());
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(ApiResponse.created(lessonService.create(request)));

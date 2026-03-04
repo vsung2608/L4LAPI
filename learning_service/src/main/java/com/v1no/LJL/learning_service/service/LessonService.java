@@ -11,8 +11,10 @@ import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
+import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.enums.JlptLevel;
+import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 
 public interface LessonService {
 
@@ -26,11 +28,11 @@ public interface LessonService {
 
     LessonDetailResponse findDetailById(UUID id);
 
-    List<LessonSummaryResponse> findByCategoryId(UUID categoryId, UUID userId);
+    List<LessonPreviewResponse> findByCategoryId(UUID categoryId, UUID userId);
 
-    List<LessonSummaryResponse> findByLevel(JlptLevel level);
+    List<LessonPreviewResponse> findByLevel(JlptLevel level);
 
-    PageResponse<LessonSummaryResponse> findAll(Pageable pageable);
+    PageResponse<LessonPreviewResponse> findAll(Pageable pageable);
 
-    LanguageCatalogResponse getCatalogByLanguage(String languageCode, UUID userId);
+    LanguageCatalogResponse getCatalogByLanguage(LanguageCode languageCode, UUID userId);
 }

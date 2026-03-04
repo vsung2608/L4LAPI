@@ -28,12 +28,11 @@ import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.dto.response.YoutubeVideoInfo;
 import com.v1no.LJL.learning_service.model.entity.Category;
-import com.v1no.LJL.learning_service.model.entity.Language;
 import com.v1no.LJL.learning_service.model.entity.Lesson;
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
 import com.v1no.LJL.learning_service.model.enums.JlptLevel;
+import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 import com.v1no.LJL.learning_service.repository.CategoryRepository;
-import com.v1no.LJL.learning_service.repository.LanguageRepository;
 import com.v1no.LJL.learning_service.repository.LessonRepository;
 import com.v1no.LJL.learning_service.service.LessonService;
 import com.v1no.LJL.learning_service.util.YoutubeUtil;
@@ -50,7 +49,6 @@ public class LessonServiceImpl implements LessonService {
 
     private final LessonRepository lessonRepository;
     private final CategoryRepository categoryRepository;
-    private final LanguageRepository languageRepository;
     private final CategoryMapper categoryMapper;
     private final LessonMapper lessonMapper;
     private final ProgressServiceClient progressServiceClient;
@@ -65,12 +63,12 @@ public class LessonServiceImpl implements LessonService {
         String videoId = YoutubeUtil.extractVideoId(request.youtubeVideoUrl());
         YoutubeVideoInfo info = YoutubeUtil.getVideoInfo(videoId);
 
-        levelValidator.validate(category.getLanguage().getCode(), request.level());
+        levelValidator.validate(category.getLanguage().name(), request.level());
 
         Lesson saved = lessonRepository.save(lessonMapper.toEntity(request, category, videoId, info));
 
         log.info("Lesson created: id={}", saved.getId());
-        return lessonMapper.toSummary(saved, null);
+        return lessonMapper.toSummary(saved);
     }
 
     @Override
@@ -84,7 +82,7 @@ public class LessonServiceImpl implements LessonService {
         Lesson saved = lessonRepository.save(lesson);
 
         log.info("Lesson updated: id={}", saved.getId());
-        return lessonMapper.toSummary(saved, null);
+        return lessonMapper.toSummary(saved);
     }
 
     @Override
@@ -106,7 +104,7 @@ public class LessonServiceImpl implements LessonService {
     public LessonSummaryResponse findById(UUID id) {
         Lesson lesson = lessonRepository.findByIdWithCategory(id)
             .orElseThrow(() -> new ResourceNotFoundException("Lesson not found: " + id));
-        return lessonMapper.toSummary(lesson, null);
+        return lessonMapper.toSummary(lesson);
     }
 
     @Override
@@ -119,7 +117,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LessonSummaryResponse> findByCategoryId(UUID categoryId, UUID userId) {
+    public List<LessonPreviewResponse> findByCategoryId(UUID categoryId, UUID userId) {
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException("Category not found: " + categoryId);
         }
@@ -141,7 +139,7 @@ public class LessonServiceImpl implements LessonService {
             .collect(Collectors.toMap(LessonProgressSummary::lessonId, Function.identity()));
 
         return lessons.stream()
-            .map(lesson -> lessonMapper.toSummary(
+            .map(lesson -> lessonMapper.toPreview(
                 lesson,
                 progressMap.get(lesson.getId())
             ))
@@ -150,19 +148,19 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LessonSummaryResponse> findByLevel(JlptLevel level) {
+    public List<LessonPreviewResponse> findByLevel(JlptLevel level) {
         return lessonRepository.findActiveByLevelWithCategory(level)
             .stream()
-            .map(lesson -> lessonMapper.toSummary(lesson, null))
+            .map(lesson -> lessonMapper.toPreview(lesson, null))
             .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<LessonSummaryResponse> findAll(Pageable pageable) {
+    public PageResponse<LessonPreviewResponse> findAll(Pageable pageable) {
         Page<Lesson> page = lessonRepository.findAllActive(pageable);
-        return PageResponse.<LessonSummaryResponse>builder()
-            .data(page.getContent().stream().map(lesson -> lessonMapper.toSummary(lesson, null)).toList())
+        return PageResponse.<LessonPreviewResponse>builder()
+            .data(page.getContent().stream().map(lesson -> lessonMapper.toPreview(lesson, null)).toList())
             .totalElements(page.getTotalElements())
             .totalPages(page.getTotalPages())
             .page(page.getNumber())
@@ -171,22 +169,15 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public LanguageCatalogResponse getCatalogByLanguage(String languageCode, UUID userId) {
+    public LanguageCatalogResponse getCatalogByLanguage(LanguageCode languageCode, UUID userId) {
         log.info("Getting catalog: languageCode={}, userId={}", languageCode, userId);
-
-        Language language = languageRepository.findByCode(languageCode)
-            .orElseThrow(() -> new ResourceNotFoundException(
-                "Language not found: " + languageCode
-            ));
 
         List<Category> categories = categoryRepository
             .findActiveByLanguageCode(languageCode);
 
         if (categories.isEmpty()) {
             return new LanguageCatalogResponse(
-                language.getCode(),
-                language.getName(),
-                language.getNativeName(),
+                languageCode,
                 List.of()
             );
         }
@@ -230,9 +221,7 @@ public class LessonServiceImpl implements LessonService {
             .toList();
 
         return new LanguageCatalogResponse(
-            language.getCode(),
-            language.getName(),
-            language.getNativeName(),
+            languageCode,
             categoryResponses
         );
     }

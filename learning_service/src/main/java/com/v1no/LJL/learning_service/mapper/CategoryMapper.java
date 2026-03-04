@@ -49,6 +49,7 @@ public class CategoryMapper {
             category.getId(),
             category.getName(),
             category.getDescription(),
+            category.getLanguage().name(),
             category.getThumbnailUrl(),
             category.getDisplayOrder(),
             category.getStatus(),

@@ -51,11 +51,9 @@ public class LessonMapper {
         lesson.setStatus(request.status());
     }
 
-    public LessonSummaryResponse toSummary(Lesson lesson, LessonProgressSummary progress) {
+    public LessonSummaryResponse toSummary(Lesson lesson) {
         return new LessonSummaryResponse(
             lesson.getId(),
-            lesson.getCategory().getId(),
-            lesson.getCategory().getName(),
             lesson.getTitle(),
             lesson.getDescription(),
             lesson.getThumbnailUrl(),
@@ -65,8 +63,7 @@ public class LessonMapper {
             lesson.getDisplayOrder(),
             lesson.getStatus(),
             lesson.getTotalSentences(),
-            lesson.getCreatedAt(),
-            progress
+            lesson.getCreatedAt()
         );
     }
 

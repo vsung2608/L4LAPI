@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.v1no.LJL.learning_service.model.entity.Category;
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
+import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
@@ -32,9 +33,9 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     @EntityGraph(value = "Category.withLanguage")
     @Query("""
         SELECT c FROM Category c
-        WHERE c.language.code = :languageCode
+        WHERE c.language = :languageCode
         AND c.status = 'ACTIVE'
         ORDER BY c.displayOrder ASC
         """)
-    List<Category> findActiveByLanguageCode(@Param("languageCode") String languageCode);
+    List<Category> findActiveByLanguageCode(@Param("languageCode") LanguageCode languageCode);
 }

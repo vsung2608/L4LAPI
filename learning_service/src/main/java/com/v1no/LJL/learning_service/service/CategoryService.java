@@ -18,6 +18,8 @@ public interface CategoryService {
 
     CategorySummaryResponse findById(UUID id);
 
+    List<CategorySummaryResponse> findByLanguageCode(String languageCode);
+
     CategoryDetailResponse findDetailById(UUID id);
 
     List<CategorySummaryResponse> findAll();

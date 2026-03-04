@@ -102,4 +102,13 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + id));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategorySummaryResponse> findByLanguageCode(String languageCode) {
+        return categoryRepository.findAllByLanguageCode(languageCode)
+            .stream()
+            .map(categoryMapper::toSummary)
+            .toList();
+    }
 }

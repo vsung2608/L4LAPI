@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
+import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,9 +47,9 @@ public class Category {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "language_code", nullable = false)
-    private Language language;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "language_code", nullable = false, length = 10)
+    private LanguageCode language;
 
     @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;

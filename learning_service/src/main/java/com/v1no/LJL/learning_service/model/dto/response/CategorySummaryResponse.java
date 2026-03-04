@@ -9,6 +9,7 @@ public record CategorySummaryResponse(
     UUID id,
     String name,
     String description,
+    String language,
     String thumbnailUrl,
     Integer displayOrder,
     ContentStatus status,
