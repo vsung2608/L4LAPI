@@ -16,6 +16,7 @@ import com.v1no.LJL.learning_service.model.dto.response.CategoryDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.CategorySummaryResponse;
 import com.v1no.LJL.learning_service.model.entity.Category;
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
+import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 import com.v1no.LJL.learning_service.repository.CategoryRepository;
 import com.v1no.LJL.learning_service.service.CategoryService;
 
@@ -105,8 +106,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategorySummaryResponse> findByLanguageCode(String languageCode) {
-        return categoryRepository.findAllByLanguageCode(languageCode)
+    public List<CategorySummaryResponse> findByLanguageCode(LanguageCode languageCode) {
+        return categoryRepository.findActiveByLanguageCode(languageCode)
             .stream()
             .map(categoryMapper::toSummary)
             .toList();

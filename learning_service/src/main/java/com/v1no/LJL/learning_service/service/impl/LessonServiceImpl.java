@@ -47,6 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LessonServiceImpl implements LessonService {
     private static final int PREVIEW_LESSON_LIMIT = 5;
 
+    private final YoutubeUtil youtubeUtil;
     private final LessonRepository lessonRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
@@ -60,8 +61,8 @@ public class LessonServiceImpl implements LessonService {
 
         Category category = findCategoryById(request.categoryId());
 
-        String videoId = YoutubeUtil.extractVideoId(request.youtubeVideoUrl());
-        YoutubeVideoInfo info = YoutubeUtil.getVideoInfo(videoId);
+        String videoId = youtubeUtil.extractVideoId(request.youtubeVideoUrl());
+        YoutubeVideoInfo info = youtubeUtil.getVideoInfo(videoId);
 
         levelValidator.validate(category.getLanguage().name(), request.level());
 
@@ -177,7 +178,7 @@ public class LessonServiceImpl implements LessonService {
 
         if (categories.isEmpty()) {
             return new LanguageCatalogResponse(
-                languageCode,
+                languageCode.name(),
                 List.of()
             );
         }
@@ -221,7 +222,7 @@ public class LessonServiceImpl implements LessonService {
             .toList();
 
         return new LanguageCatalogResponse(
-            languageCode,
+            languageCode.name(),
             categoryResponses
         );
     }

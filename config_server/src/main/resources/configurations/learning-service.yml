@@ -36,6 +36,10 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+app:
+  youtube:
+    api-key: AIzaSyCUrRKVExQiB9aMIRnqidkW4m-o4luRbR0
+
 logging:
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%thread]){cyan} %clr(%logger{36}){yellow} %clr([%file:%line]){magenta} - %msg%n"

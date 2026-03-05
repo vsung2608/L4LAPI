@@ -16,6 +16,9 @@ import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.entity.Category;
 import com.v1no.LJL.learning_service.model.entity.Lesson;
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
+import com.v1no.LJL.learning_service.model.enums.LanguageCode;
+
+import jakarta.persistence.EnumType;
 
 @Component
 public class CategoryMapper {
@@ -29,6 +32,7 @@ public class CategoryMapper {
     public Category toEntity(CreateCategoryRequest request) {
         return Category.builder()
             .name(request.name())
+            .language(EnumType.valueOf(LanguageCode.class, request.languageCode()))
             .description(request.description())
             .thumbnailUrl(request.thumbnailUrl())
             .displayOrder(request.displayOrder())
@@ -60,7 +64,7 @@ public class CategoryMapper {
     public CategoryDetailResponse toDetail(Category category) {
         List<LessonSummaryResponse> lessons = category.getLessons()
             .stream()
-            .map(lesson -> lessonMapper.toSummary(lesson, null))
+            .map(lesson -> lessonMapper.toSummary(lesson))
             .toList();
 
         return new CategoryDetailResponse(

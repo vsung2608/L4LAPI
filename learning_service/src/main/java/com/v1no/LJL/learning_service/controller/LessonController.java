@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,12 +23,12 @@ import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
+import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.enums.JlptLevel;
 import com.v1no.LJL.learning_service.service.LessonService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -89,7 +90,7 @@ public class LessonController {
 
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "Get all active lessons by category")
-    public ResponseEntity<ApiResponse<List<LessonSummaryResponse>>> findByCategoryId(
+    public ResponseEntity<ApiResponse<List<LessonPreviewResponse>>> findByCategoryId(
         @PathVariable UUID categoryId,
         @RequestParam UUID userId
     ) {
@@ -98,7 +99,7 @@ public class LessonController {
 
     @GetMapping("/level/{level}")
     @Operation(summary = "Get all active lessons by JLPT level")
-    public ResponseEntity<ApiResponse<List<LessonSummaryResponse>>> findByLevel(
+    public ResponseEntity<ApiResponse<List<LessonPreviewResponse>>> findByLevel(
         @PathVariable JlptLevel level
     ) {
         return ResponseEntity.ok(ApiResponse.ok(lessonService.findByLevel(level)));
@@ -106,7 +107,7 @@ public class LessonController {
 
     @GetMapping
     @Operation(summary = "Get all active lessons with pagination")
-    public ResponseEntity<ApiResponse<PageResponse<LessonSummaryResponse>>> findAll(
+    public ResponseEntity<ApiResponse<PageResponse<LessonPreviewResponse>>> findAll(
         @PageableDefault(size = 20, sort = "createdAt", direction = Direction.DESC)
         Pageable pageable
     ) {

@@ -20,6 +20,8 @@ import com.v1no.LJL.learning_service.model.dto.request.CreateCategoryRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateCategoryRequest;
 import com.v1no.LJL.learning_service.model.dto.response.CategoryDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.CategorySummaryResponse;
+import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
+import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 import com.v1no.LJL.learning_service.service.CategoryService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,10 +90,10 @@ public class CategoryController {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.findAll()));
     }
 
-    @GetMapping
+    @GetMapping("/by-language")
     @Operation(summary = "Get all active categories by language")
     public ResponseEntity<ApiResponse<List<CategorySummaryResponse>>> findByLanguage(
-        @RequestParam String languageCode
+        @RequestParam LanguageCode languageCode
     ) {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.findByLanguageCode(languageCode)));
     }

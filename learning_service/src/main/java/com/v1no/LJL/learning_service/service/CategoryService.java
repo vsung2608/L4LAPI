@@ -7,6 +7,7 @@ import com.v1no.LJL.learning_service.model.dto.request.CreateCategoryRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateCategoryRequest;
 import com.v1no.LJL.learning_service.model.dto.response.CategoryDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.CategorySummaryResponse;
+import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 
 public interface CategoryService {
 
@@ -18,7 +19,7 @@ public interface CategoryService {
 
     CategorySummaryResponse findById(UUID id);
 
-    List<CategorySummaryResponse> findByLanguageCode(String languageCode);
+    List<CategorySummaryResponse> findByLanguageCode(LanguageCode languageCode);
 
     CategoryDetailResponse findDetailById(UUID id);
 

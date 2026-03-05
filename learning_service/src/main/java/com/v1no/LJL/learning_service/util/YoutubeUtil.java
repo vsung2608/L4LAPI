@@ -5,8 +5,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.v1no.LJL.learning_service.model.dto.response.YoutubeVideoInfo;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -15,15 +18,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
+@RequiredArgsConstructor
+@Component
 public class YoutubeUtil {
 
-    public static String YOUTUBE_API_KEY;
+    @Value("${app.youtube.api-key}")
+    private String YOUTUBE_API_KEY;
 
-    private static final Pattern YOUTUBE_VIDEO_ID_PATTERN = Pattern.compile(
+    private final Pattern YOUTUBE_VIDEO_ID_PATTERN = Pattern.compile(
             "(?<=v=|v/|vi=|vi/|embed/|shorts/|youtu.be/)([a-zA-Z0-9_-]{11})"
     );
 
-    public static String extractVideoId(String url) {
+    public String extractVideoId(String url) {
         if (url == null || url.isBlank()) return null;
 
         Matcher matcher = YOUTUBE_VIDEO_ID_PATTERN.matcher(url);
@@ -35,7 +41,7 @@ public class YoutubeUtil {
         return null;
     }
 
-    public static Integer getVideoDurationInSeconds(String videoId) {
+    public Integer getVideoDurationInSeconds(String videoId) {
         try {
             if (videoId == null || videoId.isBlank() || YOUTUBE_API_KEY == null || YOUTUBE_API_KEY.isBlank())
                 return null;
@@ -68,7 +74,7 @@ public class YoutubeUtil {
         }
     }
 
-    public static YoutubeVideoInfo getVideoInfo(String videoId) {
+    public YoutubeVideoInfo getVideoInfo(String videoId) {
         try {
             if (videoId == null || videoId.isBlank() || YOUTUBE_API_KEY == null) return null;
 
@@ -109,7 +115,7 @@ public class YoutubeUtil {
         }
     }
 
-    public static String getThumbnailUrl(String videoId) {
+    public String getThumbnailUrl(String videoId) {
         if (videoId == null || videoId.isBlank()) return null;
         return String.format("https://img.youtube.com/vi/%s/maxresdefault.jpg", videoId);
     }
