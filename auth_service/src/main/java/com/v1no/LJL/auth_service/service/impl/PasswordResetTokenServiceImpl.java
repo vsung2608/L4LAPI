@@ -13,9 +13,11 @@ import com.v1no.LJL.auth_service.model.entity.PasswordResetToken;
 import com.v1no.LJL.auth_service.model.entity.UserCredential;
 import com.v1no.LJL.auth_service.repository.PasswordResetTokenRepository;
 import com.v1no.LJL.auth_service.repository.UserCredentialRepository;
+import com.v1no.LJL.auth_service.service.PasswordResetTokenService;
 import com.v1no.LJL.auth_service.service.RefreshTokenService;
 import com.v1no.LJL.common.event.ForgotPasswordEmailEvent;
 
+import io.jsonwebtoken.security.Password;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PasswordResetTokenServiceImpl {
+public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final PasswordResetTokenRepository resetTokenRepository;
@@ -33,7 +35,7 @@ public class PasswordResetTokenServiceImpl {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void requestPasswordReset(String email) {
-        UserCredential user = userCredentialRepository.findByEmail(email)
+        UserCredential user = userCredentialRepository.findByUsername(email)
             .orElseThrow(() -> new NotFoundException("Email not found"));
         
         String rawToken = generateSecureCode();
@@ -50,7 +52,7 @@ public class PasswordResetTokenServiceImpl {
 
         ForgotPasswordEmailEvent event = ForgotPasswordEmailEvent.builder()
             .userId(user.getId())
-            .email(user.getEmail())
+            .email(user.getUsername())
             .token(rawToken)
             .build();
 

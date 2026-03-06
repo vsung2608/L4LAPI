@@ -41,16 +41,16 @@ public class OauthServiceImpl implements OauthService {
     private final GoogleOAuthClient googleClient;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${oauth.google.client-id}")
+    @Value("${google.oauth.client-id}")
     private String clientId;
     
-    @Value("${oauth.google.client-secret}")
+    @Value("${google.oauth.client-secret}")
     private String clientSecret;
     
-    @Value("${oauth.google.redirect-uri}")
+    @Value("${google.oauth.redirect-uri}")
     private String redirectUri;
     
-    @Value("${oauth.google.grant-type:authorization_code}")
+    @Value("${google.oauth.grant-type:authorization_code}")
     private String grantType;
     
     @Override
@@ -81,11 +81,11 @@ public class OauthServiceImpl implements OauthService {
             
             UserCredential user = findOrCreateUser(googleUser, tokenResponse);
             
-            log.debug("Generating JWT tokens for user: {}", user.getEmail());
+            log.debug("Generating JWT tokens for user: {}", user.getUsername());
             String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = refreshTokenService.createRefreshToken(user);
             
-            log.info("Google OAuth login successful for user: {}", user.getEmail());
+            log.info("Google OAuth login successful for user: {}", user.getUsername());
             
             return new AuthResponse(
                 accessToken,
@@ -126,16 +126,16 @@ public class OauthServiceImpl implements OauthService {
         }
         
         Optional<UserCredential> existingUser = userRepository
-            .findByEmail(googleUser.getEmail());
+            .findByUsername(googleUser.getEmail());
         
         UserCredential user;
         
         if (existingUser.isPresent()) {
             user = existingUser.get();
-            log.info("Linking Google account to existing user: {}", user.getEmail());
+            log.info("Linking Google account to existing user: {}", user.getUsername());
         } else {
             user = createUserFromOAuth(googleUser);
-            log.info("Created new user from Google account: {}", user.getEmail());
+            log.info("Created new user from Google account: {}", user.getUsername());
         }
         
         createOAuthConnection(user, tokenResponse, googleUser);
@@ -151,7 +151,7 @@ public class OauthServiceImpl implements OauthService {
         String randomPassword = generateRandomPassword();
         
         UserCredential user = UserCredential.builder()
-            .email(googleUser.getEmail())
+            .username(googleUser.getEmail())
             .username(username)
             .passwordHash(passwordEncoder.encode(randomPassword))
             .emailVerified(googleUser.getVerifiedEmail())
@@ -192,7 +192,7 @@ public class OauthServiceImpl implements OauthService {
             .build();
         
         oauthRepository.save(connection);
-        log.debug("Created OAuth connection for user: {}", user.getEmail());
+        log.debug("Created OAuth connection for user: {}", user.getUsername());
     }
     
     /**
@@ -223,7 +223,7 @@ public class OauthServiceImpl implements OauthService {
         ));
         
         oauthRepository.save(connection);
-        log.debug("Updated OAuth connection tokens for user: {}", connection.getUser().getEmail());
+        log.debug("Updated OAuth connection tokens for user: {}", connection.getUser().getUsername());
     }
     
     /**

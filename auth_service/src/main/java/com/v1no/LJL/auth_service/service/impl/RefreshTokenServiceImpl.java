@@ -14,7 +14,9 @@ import com.v1no.LJL.auth_service.model.entity.RefreshToken;
 import com.v1no.LJL.auth_service.model.entity.UserCredential;
 import com.v1no.LJL.auth_service.repository.RefreshTokenRepository;
 import com.v1no.LJL.auth_service.security.JwtService;
+import com.v1no.LJL.auth_service.service.RefreshTokenService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RefreshTokenServiceImpl {
+public class RefreshTokenServiceImpl implements RefreshTokenService {
+    private final HttpServletRequest request;
     private final JwtService jwtService;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -82,5 +85,51 @@ public class RefreshTokenServiceImpl {
 
     private String hashToken(String rawToken) {
         return DigestUtils.sha256Hex(rawToken);
+    }
+
+    private String getClientIP() {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null) {
+            return request.getRemoteAddr();
+        }
+        return xfHeader.split(",")[0];
+    }
+
+    private String getBrowserInfo() {
+        String userAgent = request.getHeader("User-Agent");
+
+        if (userAgent == null) return "Unknown";
+
+        if (userAgent.contains("Chrome")) return "Chrome";
+        if (userAgent.contains("Firefox")) return "Firefox";
+        if (userAgent.contains("Safari")) return "Safari";
+        if (userAgent.contains("Edge")) return "Edge";
+
+        return "Unknown";
+    }
+
+    private String getOSInfo() {
+        String userAgent = request.getHeader("User-Agent");
+
+        if (userAgent == null) return "Unknown";
+
+        if (userAgent.contains("Windows")) return "Windows";
+        if (userAgent.contains("Mac")) return "MacOS";
+        if (userAgent.contains("Linux")) return "Linux";
+        if (userAgent.contains("Android")) return "Android";
+        if (userAgent.contains("iPhone")) return "iOS";
+
+        return "Unknown";
+    }
+
+    private String getDeviceType() {
+        String userAgent = request.getHeader("User-Agent");
+
+        if (userAgent == null) return "Unknown";
+
+        if (userAgent.contains("Mobi")) return "Mobile";
+        if (userAgent.contains("Tablet")) return "Tablet";
+
+        return "Desktop";
     }
 }

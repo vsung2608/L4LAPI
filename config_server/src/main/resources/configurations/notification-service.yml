@@ -1,3 +1,30 @@
+server:
+  port: 8082
+
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:vsung2608@gmail.com}
+    password: ${MAIL_PASSWORD:cnbphwikvtophphn}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  kafka:
+    consumer:
+      group-id: notificationId-v1
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: latest
+
 logging:
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%thread]){cyan} %clr(%logger{36}){yellow} %clr([%file:%line]){magenta} - %msg%n"

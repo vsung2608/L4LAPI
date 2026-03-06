@@ -16,5 +16,30 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp 1
+      - --memory 200M
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+      - --kafka-addr PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://localhost:9092
+    ports:
+      - "9092:9092"
+      
+    networks:
+      - l4l
+
 volumes:
   postgres_data:
+  kafka-data:
+
+networks:
+  l4l:
+    driver: bridge

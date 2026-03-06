@@ -29,18 +29,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-    @Value("${application.security.jwt.expiration}")
+    @Value("${application.security.jwt.expirations.access-token}")
     private long jwtExpiration;
 
-    @Value("${application.security.jwt.refreshExpiration}")
+    @Value("${application.security.jwt.expirations.refresh-token}")
     private long refreshExpiration;
 
-    @Value("${application.security.jwt.secret-key}")
+    @Value("${application.security.jwt.secrets}")
     private String jwtSecretKey;
-
-    private static final String BLACKLIST_PREFIX = "auth:blacklist:";
-
-    private final RedisTemplate<String, Object> redisTemplate;
 
     private String buildToken(
         Map<String, Object> extraClaims, 
@@ -137,7 +133,6 @@ public class JwtService {
             long ttl = claims.getExpiration().getTime() - System.currentTimeMillis();
 
             if (ttl > 0) {
-                redisTemplate.opsForValue().set(BLACKLIST_PREFIX + jti, "revoked", ttl, TimeUnit.MILLISECONDS);
                 log.info("Token JTI: {} added to blacklist", jti);
             }
         } catch (Exception e) {
@@ -145,17 +140,17 @@ public class JwtService {
         }
     }
 
-    public boolean isTokenInBlackList(String token){
-        try {
-            Claims claims = extractAllClaims(token);
-            String tokenId = claims.get("tokenId").toString();
+    // public boolean isTokenInBlackList(String token){
+    //     try {
+    //         Claims claims = extractAllClaims(token);
+    //         String tokenId = claims.get("tokenId").toString();
 
-            Boolean exists = redisTemplate.hasKey(tokenId);
-            return exists != null && exists;
+    //         Boolean exists = redisTemplate.hasKey(tokenId);
+    //         return exists != null && exists;
 
-        } catch (Exception e) {
-            log.warn("Error checking token blacklist status: {}", e.getMessage());
-            return false;
-        }
-    }
+    //     } catch (Exception e) {
+    //         log.warn("Error checking token blacklist status: {}", e.getMessage());
+    //         return false;
+    //     }
+    // }
 }

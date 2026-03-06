@@ -41,11 +41,11 @@ public class AuthServiceImpl implements AuthService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Value("${app.backend-url}")
+    @Value("${application.backend-url}")
     private String backendUrl;
 
     public void register(RegisterRequest request) {
-        if (userCredentialRepository.existsByEmail(request.email())) {
+        if (userCredentialRepository.existsByUsername(request.email())) {
             throw new DuplicateEmailException("Email already exists");
         }
         
@@ -54,8 +54,7 @@ public class AuthServiceImpl implements AuthService {
         String veificationToken = generateSecureCode();
         
         UserCredential user = UserCredential.builder()
-            .email(request.email())
-            .username(request.username())
+            .username(request.email())
             .passwordHash(passwordHash)
             .verificationToken(veificationToken)
             .emailVerified(false)
@@ -69,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
 
         VerificationEmailEvent event = VerificationEmailEvent.builder()
             .userId(user.getId())
-            .email(user.getEmail())
+            .email(user.getUsername())
             .linkVerification(buildVerificationLink(veificationToken))
             .build();
 
@@ -77,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        UserCredential user = userCredentialRepository.findByEmail(request.email())
+        UserCredential user = userCredentialRepository.findByUsername(request.email())
             .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
         
         if (user.isAccountLocked()) {

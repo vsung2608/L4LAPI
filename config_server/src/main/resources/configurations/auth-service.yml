@@ -1,10 +1,39 @@
+server:
+  port: 8080
+
 application:
+  backend-url: http://localhost:8081
   security:
     jwt:
-      secrets:
-        access-token: 36000000
+      secrets: 7128ba29ccf93f7ea1188b0134db46f4f87b46f1d56766e3f7fef6197bd286c1
       expirations:
+        access-token: 3600000
         refresh-token: 604800000
+
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_service_db
+    username: nihongo_user
+    password: nihongo_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
 
 google:
   oauth:
@@ -21,7 +50,7 @@ feign:
         readTimeout: 10000
         loggerLevel: full
   httpclient:
-    enabled: true
+    enabled: true2
     max-connections: 200
     max-connections-per-route: 50
 

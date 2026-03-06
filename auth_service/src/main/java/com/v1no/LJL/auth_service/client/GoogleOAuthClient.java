@@ -41,7 +41,7 @@ public interface GoogleOAuthClient {
      * @param authorization Bearer token (access_token từ Google)
      * @return GoogleUserInfo chứa thông tin user
      */
-    @GetMapping("https://www.googleapis.com/oauth2/v2/userinfo")
+    @GetMapping("/oauth2/v2/userinfo")
     GoogleUserInfo getUserInfo(
         @RequestHeader("Authorization") String authorization
     );

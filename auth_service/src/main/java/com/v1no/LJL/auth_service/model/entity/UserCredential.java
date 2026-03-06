@@ -2,11 +2,16 @@ package com.v1no.LJL.auth_service.model.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.v1no.LJL.auth_service.model.enums.Role;
 
@@ -31,14 +36,11 @@ import jakarta.persistence.*;
     name = "UserCredential.withOAuthConnections",
     attributeNodes = @NamedAttributeNode("oauthConnections")
 )
-public class UserCredential {
+public class UserCredential implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Column(nullable = false, unique = true, length = 255)
-    private String email;
 
     @Column(nullable = false, unique = true, length = 50)
     private String username;
@@ -119,5 +121,15 @@ public class UserCredential {
             return true;
         }
         return Boolean.TRUE.equals(isLocked);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+
+    @Override
+    public @Nullable String getPassword() {
+        return passwordHash;
     }
 }
