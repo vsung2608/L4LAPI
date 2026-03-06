@@ -15,7 +15,7 @@ public class SentenceMapper {
         return Sentence.builder()
             .lesson(lesson)
             .content(request.content())
-            .furigana(request.furigana())
+            .translation(request.furigana())
             .translation(request.translation())
             .startTimeSeconds(request.startTimeSeconds())
             .endTimeSeconds(request.endTimeSeconds())
@@ -25,7 +25,7 @@ public class SentenceMapper {
 
     public void updateEntity(Sentence sentence, UpdateSentenceRequest request) {
         sentence.setContent(request.content());
-        sentence.setFurigana(request.furigana());
+        sentence.setTranscription(request.furigana());
         sentence.setTranslation(request.translation());
         sentence.setStartTimeSeconds(request.startTimeSeconds());
         sentence.setEndTimeSeconds(request.endTimeSeconds());
@@ -37,7 +37,7 @@ public class SentenceMapper {
             sentence.getId(),
             sentence.getLesson().getId(),
             sentence.getContent(),
-            sentence.getFurigana(),
+            sentence.getTranscription(),
             sentence.getTranslation(),
             sentence.getStartTimeSeconds(),
             sentence.getEndTimeSeconds(),

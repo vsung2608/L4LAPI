@@ -31,8 +31,8 @@ public class Sentence {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "furigana", columnDefinition = "TEXT")
-    private String furigana;
+    @Column(name = "transcription", columnDefinition = "TEXT")
+    private String transcription;
 
     @Column(name = "translation", columnDefinition = "TEXT")
     private String translation;

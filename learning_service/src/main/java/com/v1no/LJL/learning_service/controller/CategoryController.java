@@ -20,7 +20,6 @@ import com.v1no.LJL.learning_service.model.dto.request.CreateCategoryRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateCategoryRequest;
 import com.v1no.LJL.learning_service.model.dto.response.CategoryDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.CategorySummaryResponse;
-import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
 import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 import com.v1no.LJL.learning_service.service.CategoryService;
 

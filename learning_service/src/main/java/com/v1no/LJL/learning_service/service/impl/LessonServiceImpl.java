@@ -246,6 +246,19 @@ public class LessonServiceImpl implements LessonService {
         }
     }
 
+    @Override
+    public List<LessonSummaryResponse> findByCategoryIdForAdmin(UUID categoryId){
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new ResourceNotFoundException("Category not found: " + categoryId);
+        }
+
+        return lessonRepository
+            .findAllByCategoryId(categoryId)
+            .stream()
+            .map(lessonMapper::toSummary)
+            .toList();
+    }
+
     private Lesson findLessonById(UUID id) {
         return lessonRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Lesson not found: " + id));

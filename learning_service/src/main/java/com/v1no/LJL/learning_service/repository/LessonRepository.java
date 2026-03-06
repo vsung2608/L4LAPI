@@ -60,6 +60,8 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
         """)
     Page<Lesson> findAllActive(Pageable pageable);
 
+    List<Lesson> findAllByCategoryId(UUID categoryId);
+
     @EntityGraph(value = "Lesson.withCategory")
     @Query("""
         SELECT l FROM Lesson l

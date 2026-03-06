@@ -30,6 +30,8 @@ public interface LessonService {
 
     List<LessonPreviewResponse> findByCategoryId(UUID categoryId, UUID userId);
 
+    List<LessonSummaryResponse> findByCategoryIdForAdmin(UUID categoryId);
+
     List<LessonPreviewResponse> findByLevel(JlptLevel level);
 
     PageResponse<LessonPreviewResponse> findAll(Pageable pageable);

@@ -9,7 +9,7 @@ import com.v1no.LJL.learning_service.model.dto.response.SentenceResponse;
 
 public interface SentenceService {
 
-    SentenceResponse create(CreateSentenceRequest request);
+    List<SentenceResponse> create(List<CreateSentenceRequest> request, UUID lessonId);
 
     SentenceResponse update(UUID id, UpdateSentenceRequest request);
 

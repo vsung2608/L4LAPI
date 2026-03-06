@@ -1,15 +1,10 @@
 package com.v1no.LJL.learning_service.model.dto.request;
 
-import java.util.UUID;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateSentenceRequest(
-    @NotNull(message = "Lesson is required")
-    UUID lessonId,
-
     @NotBlank(message = "Content is required")
     String content,
 

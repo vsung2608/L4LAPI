@@ -33,24 +33,34 @@ public class SentenceServiceImpl implements SentenceService {
     private final SentenceMapper sentenceMapper;
 
     @Override
-    public SentenceResponse create(CreateSentenceRequest request) {
-        log.info("Creating sentence: lessonId={}, orderIndex={}", request.lessonId(), request.orderIndex());
+    public List<SentenceResponse> create(List<CreateSentenceRequest> requests, UUID lessonId) {
+        log.info("Creating sentences: lessonId={}, count={}", lessonId, requests.size());
 
-        Lesson lesson = findLessonById(request.lessonId());
-        validateTimestamps(request.startTimeSeconds(), request.endTimeSeconds());
-
-        boolean orderExists = sentenceRepository.existsByLessonIdAndOrderIndex(
-            request.lessonId(), request.orderIndex()
-        );
-        if (orderExists) {
-            throw new DuplicateResourceException(
-                "Order index " + request.orderIndex() + " already exists in lesson: " + request.lessonId()
+        Lesson lesson = findLessonById(lessonId);
+        
+        for (CreateSentenceRequest request : requests) {
+            validateTimestamps(request.startTimeSeconds(), request.endTimeSeconds());
+            
+            boolean orderExists = sentenceRepository.existsByLessonIdAndOrderIndex(
+                lessonId, request.orderIndex()
             );
+            if (orderExists) {
+                throw new DuplicateResourceException(
+                    "Order index " + request.orderIndex() + " already exists in lesson: " + lessonId
+                );
+            }
         }
 
-        Sentence saved = sentenceRepository.save(sentenceMapper.toEntity(request, lesson));
-        log.info("Sentence created: id={}", saved.getId());
-        return sentenceMapper.toResponse(saved);
+        List<Sentence> sentences = requests.stream()
+            .map(request -> sentenceMapper.toEntity(request, lesson))
+            .toList();
+
+        List<Sentence> saved = sentenceRepository.saveAll(sentences);
+        log.info("Sentences created: count={}", saved.size());
+        
+        return saved.stream()
+            .map(sentenceMapper::toResponse)
+            .toList();
     }
 
     @Override

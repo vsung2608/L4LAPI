@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.v1no.LJL.common.dto.ApiResponse;
@@ -37,13 +38,14 @@ public class SentenceController {
 
     @PostMapping
     @Operation(summary = "Create new sentence")
-    public ResponseEntity<ApiResponse<SentenceResponse>> create(
-        @Valid @RequestBody CreateSentenceRequest request
+    public ResponseEntity<ApiResponse<List<SentenceResponse>>> create(
+        @RequestParam UUID lessonId,
+        @Valid @RequestBody List<CreateSentenceRequest> request
     ) {
-        log.info("POST /api/v1/sentences - lessonId={}, orderIndex={}", request.lessonId(), request.orderIndex());
+        log.info("POST /api/v1/sentences - lessonId={}, count={}", lessonId, request.size());
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.created(sentenceService.create(request)));
+            .body(ApiResponse.created(sentenceService.create(request, lessonId)));
     }
 
     @PutMapping("/{id}")

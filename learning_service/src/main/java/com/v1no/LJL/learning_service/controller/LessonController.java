@@ -97,6 +97,14 @@ public class LessonController {
         return ResponseEntity.ok(ApiResponse.ok(lessonService.findByCategoryId(categoryId, userId)));
     }
 
+    @GetMapping("/admin/category/{categoryId}")
+    @Operation(summary = "Get all active lessons by category")
+    public ResponseEntity<ApiResponse<List<LessonSummaryResponse>>> findByCategoryIdForAdmin(
+        @PathVariable UUID categoryId
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(lessonService.findByCategoryIdForAdmin(categoryId)));
+    }
+
     @GetMapping("/level/{level}")
     @Operation(summary = "Get all active lessons by JLPT level")
     public ResponseEntity<ApiResponse<List<LessonPreviewResponse>>> findByLevel(

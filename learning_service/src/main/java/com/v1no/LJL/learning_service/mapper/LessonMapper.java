@@ -1,5 +1,6 @@
 package com.v1no.LJL.learning_service.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -36,6 +37,7 @@ public class LessonMapper {
             .level(request.level())
             .displayOrder(request.displayOrder())
             .status(ContentStatus.DRAFT)
+            .createdAt(LocalDateTime.now())
             .build();
     }
 
