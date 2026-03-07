@@ -2,6 +2,16 @@ server:
   port: 8082
 
 spring:
+  mongodb:
+    # uri: mongodb://vsung2608:TzJRLiAJUIGvMWwg@127.0.0.1:27017/notification-service?authSource=admin
+    uri: mongodb+srv://vsung2608:TzJRLiAJUIGvMWwg@l4lcluster.ri4oflp.mongodb.net/notification_service?appName=l4lcluster&retryWrites=true&w=majority
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-service-group 
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: latest
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -16,14 +26,20 @@ spring:
           auth: true
           starttls:
             enable: true
+  
+app:
+  mail:
+    from: vsung2608@gmail.com
+  frontend:
+    url: http://localhost:4200
+  backend:
+    url: http://localhost:8080
 
-  kafka:
-    consumer:
-      group-id: notificationId-v1
-      bootstrap-servers: localhost:9092
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      auto-offset-reset: latest
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 logging:
   pattern:

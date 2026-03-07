@@ -8,6 +8,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.v1no.LJL.auth_service.exception.InvalidTokenException;
 import com.v1no.LJL.auth_service.model.entity.PasswordResetToken;
 import com.v1no.LJL.auth_service.model.entity.UserCredential;
@@ -17,7 +19,6 @@ import com.v1no.LJL.auth_service.service.PasswordResetTokenService;
 import com.v1no.LJL.auth_service.service.RefreshTokenService;
 import com.v1no.LJL.common.event.ForgotPasswordEmailEvent;
 
-import io.jsonwebtoken.security.Password;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
+    private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final PasswordResetTokenRepository resetTokenRepository;
     private final UserCredentialRepository userCredentialRepository;
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void requestPasswordReset(String email) {
         UserCredential user = userCredentialRepository.findByUsername(email)
@@ -56,7 +58,14 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
             .token(rawToken)
             .build();
 
-        kafkaTemplate.send("forgot-password-email", event);
+        try {
+            String json = objectMapper.writeValueAsString(event);
+            kafkaTemplate.send("forgot-password-email", json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        
     }
     
 

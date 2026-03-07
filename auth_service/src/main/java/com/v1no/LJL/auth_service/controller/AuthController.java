@@ -3,9 +3,15 @@ package com.v1no.LJL.auth_service.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.v1no.LJL.auth_service.exception.InvalidTokenException;
 import com.v1no.LJL.auth_service.model.dto.request.LoginRequest;
 import com.v1no.LJL.auth_service.model.dto.request.RegisterRequest;
 import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
@@ -15,6 +21,7 @@ import com.v1no.LJL.auth_service.service.PasswordResetTokenService;
 import com.v1no.LJL.auth_service.service.RefreshTokenService;
 import com.v1no.LJL.common.dto.ApiResponse;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -23,6 +30,7 @@ public class AuthController {
     private final OauthService oauthService;
     private final PasswordResetTokenService passwordResetTokenService;
     private final RefreshTokenService refreshTokenService;
+
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<String>> register(@RequestBody @Valid RegisterRequest request) {
@@ -43,6 +51,14 @@ public class AuthController {
         return ResponseEntity.ok("Logout successful");
     }
 
+     @GetMapping("/verify-email")
+    public ResponseEntity<Void> verifyEmail(@RequestParam String token) {
+            String redirectUrl = authService.verifyEmail(token);
+            return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(redirectUrl))
+                .build();
+    }
+    
     // @PostMapping("/refresh")
     // public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshTokenRequest refreshToken) {
     //     return ResponseEntity.ok(authService.refresh(refreshToken));

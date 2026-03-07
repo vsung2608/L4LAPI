@@ -20,7 +20,6 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users_credentials", indexes = {
-    @Index(name = "idx_users_email", columnList = "email"),
     @Index(name = "idx_users_username", columnList = "username")
 })
 @Getter

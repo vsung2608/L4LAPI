@@ -20,7 +20,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final EmailService emailService;
     
-    public void createNotification(UUID userId, String type, String title, String message, boolean sendEmail) {
+    public void createNotification(String userId, String type, String title, String message, boolean sendEmail) {
         Notification notification = Notification.builder()
             .userId(userId)
             .type(type)

@@ -31,9 +31,9 @@ public class EmailService {
     public void sendVerificationEmail(String to, String verificationToken) {
         try {
             Context context = new Context();
-            context.setVariable("verificationUrl", verificationToken);
+            context.setVariable("verificationLink", verificationToken);
             
-            String htmlContent = templateEngine.process("verification-email", context);
+            String htmlContent = templateEngine.process("email/verification-email", context);
             
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -56,7 +56,7 @@ public class EmailService {
             Context context = new Context();
             context.setVariable("token", frontendUrl + resetToken);
             
-            String htmlContent = templateEngine.process("password-reset-email", context);
+            String htmlContent = templateEngine.process("email/password-reset-email", context);
             
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -80,7 +80,7 @@ public class EmailService {
             context.setVariable("username", username);
             context.setVariable("platformUrl", frontendUrl);
             
-            String htmlContent = templateEngine.process("welcome-email", context);
+            String htmlContent = templateEngine.process("email/welcome-email", context);
             
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");

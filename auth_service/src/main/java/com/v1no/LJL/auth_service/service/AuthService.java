@@ -7,5 +7,6 @@ import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
 public interface AuthService {
     void register(RegisterRequest request);
     AuthResponse login(LoginRequest request);
+    String verifyEmail(String token);
     void logout(String rawToken);
 }

@@ -2,7 +2,8 @@ server:
   port: 8080
 
 application:
-  backend-url: http://localhost:8081
+  backend-url: http://localhost:8081/api/v1
+  frontend-url: http://localhost:4200
   security:
     jwt:
       secrets: 7128ba29ccf93f7ea1188b0134db46f4f87b46f1d56766e3f7fef6197bd286c1
@@ -28,7 +29,7 @@ spring:
     bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringDeserializer
 
 eureka:
   client:

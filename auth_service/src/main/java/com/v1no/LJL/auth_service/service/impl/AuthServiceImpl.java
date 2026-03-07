@@ -10,6 +10,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.v1no.LJL.auth_service.exception.AccountDisabledException;
 import com.v1no.LJL.auth_service.exception.AccountLockedException;
 import com.v1no.LJL.auth_service.exception.DuplicateEmailException;
@@ -38,11 +40,15 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Value("${application.backend-url}")
     private String backendUrl;
+
+    @Value("${application.frontend-url}")
+    private String frontendUrl;
 
     public void register(RegisterRequest request) {
         if (userCredentialRepository.existsByUsername(request.email())) {
@@ -72,7 +78,13 @@ public class AuthServiceImpl implements AuthService {
             .linkVerification(buildVerificationLink(veificationToken))
             .build();
 
-        kafkaTemplate.send("sent-verification-email", event);
+            try {
+                String json = objectMapper.writeValueAsString(event);
+                kafkaTemplate.send("sent-verification-email", json);
+                log.info("Sent verification email event: {}", json);
+            } catch (JsonProcessingException e) {
+                log.error("Failed to serialize event", e);
+            }
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -113,6 +125,21 @@ public class AuthServiceImpl implements AuthService {
         
         refreshToken.revoke();
         refreshTokenRepository.save(refreshToken);
+    }
+
+    public String verifyEmail(String token) {
+        UserCredential user = userCredentialRepository.findByVerificationToken(token)
+            .orElseThrow(() -> new InvalidTokenException("Invalid or expired verification token"));
+
+        if (user.getEmailVerified()) {
+            return frontendUrl + "/auth/verify-failed";
+        }
+
+        user.setEmailVerified(true);
+        user.setVerificationToken(null);
+        userCredentialRepository.save(user);
+
+        return frontendUrl + "/auth/verify-success";
     }
 
     private String hashToken(String rawToken) {
