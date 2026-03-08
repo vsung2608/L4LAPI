@@ -51,12 +51,12 @@ public class AuthController {
         return ResponseEntity.ok("Logout successful");
     }
 
-     @GetMapping("/verify-email")
+    @GetMapping("/verify-email")
     public ResponseEntity<Void> verifyEmail(@RequestParam String token) {
-            String redirectUrl = authService.verifyEmail(token);
-            return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(redirectUrl))
-                .build();
+        String redirectUrl = authService.verifyEmail(token);
+        return ResponseEntity.status(HttpStatus.FOUND)
+            .location(URI.create(redirectUrl))
+            .build();
     }
     
     // @PostMapping("/refresh")

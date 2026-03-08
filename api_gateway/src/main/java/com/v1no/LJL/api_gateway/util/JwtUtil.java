@@ -12,17 +12,16 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
-
-    private final SecretKey secretKey;
-
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
-        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
-    }
+    @Value("{app.security.jwt.secrets}")
+    private String secretKeys;
 
     public Claims extractAllClaims(String token) {
+        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKeys));
         return Jwts.parser()
             .verifyWith(secretKey)
             .build()
@@ -39,8 +38,12 @@ public class JwtUtil {
         }
     }
 
-    public String extractUserId(String token) {
+    public String extractUserEmail(String token) {
         return extractAllClaims(token).getSubject();
+    }
+
+    public String extractUserId(String token) {
+        return extractAllClaims(token).get("role", String.class);
     }
 
     public String extractRole(String token) {

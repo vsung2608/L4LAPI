@@ -15,7 +15,7 @@ public class SentenceMapper {
         return Sentence.builder()
             .lesson(lesson)
             .content(request.content())
-            .translation(request.furigana())
+            .translation(request.transcription())
             .translation(request.translation())
             .startTimeSeconds(request.startTimeSeconds())
             .endTimeSeconds(request.endTimeSeconds())

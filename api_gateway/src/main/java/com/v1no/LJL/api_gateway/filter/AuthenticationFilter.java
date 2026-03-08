@@ -28,7 +28,6 @@ public class AuthenticationFilter implements GatewayFilterFactory<Authentication
 
                 log.debug("Injecting headers: userId={}, role={}", userId, role);
 
-                // Strip header cũ từ FE trước khi inject — chống giả mạo
                 ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                     .headers(headers -> {
                         headers.remove("X-User-Id");

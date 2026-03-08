@@ -1,7 +1,6 @@
 package com.v1no.LJL.common.dto;
 import java.time.LocalDateTime;
 
-import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,7 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> ok(T data) {
         return ApiResponse.<T>builder()
-            .status(HttpStatus.OK.value())
+            .status(200)
             .message("Success")
             .data(data)
             .timestamp(LocalDateTime.now())
@@ -29,7 +28,7 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> created(T data) {
         return ApiResponse.<T>builder()
-            .status(HttpStatus.CREATED.value())
+            .status(201)
             .message("Created")
             .data(data)
             .timestamp(LocalDateTime.now())

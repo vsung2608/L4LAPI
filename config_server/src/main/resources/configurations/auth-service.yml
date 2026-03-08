@@ -2,7 +2,7 @@ server:
   port: 8080
 
 application:
-  backend-url: http://localhost:8081/api/v1
+  backend-url: http://localhost:8080/api/v1/auth
   frontend-url: http://localhost:4200
   security:
     jwt:
@@ -21,7 +21,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 

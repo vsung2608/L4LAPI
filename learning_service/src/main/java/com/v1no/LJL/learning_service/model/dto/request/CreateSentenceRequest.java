@@ -8,7 +8,7 @@ public record CreateSentenceRequest(
     @NotBlank(message = "Content is required")
     String content,
 
-    String furigana,
+    String transcription,
 
     String translation,
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ import com.v1no.LJL.common.dto.ApiResponse;
 import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
+import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
@@ -92,7 +94,7 @@ public class LessonController {
     @Operation(summary = "Get all active lessons by category")
     public ResponseEntity<ApiResponse<List<LessonPreviewResponse>>> findByCategoryId(
         @PathVariable UUID categoryId,
-        @RequestParam UUID userId
+        @RequestHeader("X-User-Id") UUID userId
     ) {
         return ResponseEntity.ok(ApiResponse.ok(lessonService.findByCategoryId(categoryId, userId)));
     }
@@ -121,4 +123,15 @@ public class LessonController {
     ) {
         return ResponseEntity.ok(ApiResponse.ok(lessonService.findAll(pageable)));
     }
+
+    @GetMapping("/catalog")
+    public ResponseEntity<ApiResponse<LanguageCatalogResponse>> getMethodName(
+        @RequestParam String languageCode,
+        @RequestHeader("X-User-Id") UUID userId
+    ) {
+        return ResponseEntity.ok(
+            ApiResponse.ok(lessonService.getCatalogByLanguage(languageCode, userId))
+        );
+    }
+    
 }

@@ -37,6 +37,7 @@ import com.v1no.LJL.learning_service.repository.LessonRepository;
 import com.v1no.LJL.learning_service.service.LessonService;
 import com.v1no.LJL.learning_service.util.YoutubeUtil;
 
+import jakarta.persistence.EnumType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -170,15 +171,16 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public LanguageCatalogResponse getCatalogByLanguage(LanguageCode languageCode, UUID userId) {
+    public LanguageCatalogResponse getCatalogByLanguage(String languageCode, UUID userId) {
         log.info("Getting catalog: languageCode={}, userId={}", languageCode, userId);
 
+        LanguageCode code = EnumType.valueOf(LanguageCode.class, languageCode);
         List<Category> categories = categoryRepository
-            .findActiveByLanguageCode(languageCode);
+            .findActiveByLanguageCode(code);
 
         if (categories.isEmpty()) {
             return new LanguageCatalogResponse(
-                languageCode.name(),
+                code.name(),
                 List.of()
             );
         }
@@ -222,7 +224,7 @@ public class LessonServiceImpl implements LessonService {
             .toList();
 
         return new LanguageCatalogResponse(
-            languageCode.name(),
+            code.name(),
             categoryResponses
         );
     }

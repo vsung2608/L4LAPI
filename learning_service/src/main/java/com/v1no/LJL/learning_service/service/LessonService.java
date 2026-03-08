@@ -36,5 +36,5 @@ public interface LessonService {
 
     PageResponse<LessonPreviewResponse> findAll(Pageable pageable);
 
-    LanguageCatalogResponse getCatalogByLanguage(LanguageCode languageCode, UUID userId);
+    LanguageCatalogResponse getCatalogByLanguage(String languageCode, UUID userId);
 }

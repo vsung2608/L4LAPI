@@ -8,6 +8,12 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+
+app:
+  security:
+    jwt:
+      secrets: 7128ba29ccf93f7ea1188b0134db46f4f87b46f1d56766e3f7fef6197bd286c1
+
 management:
   tracing:
     sampling:
