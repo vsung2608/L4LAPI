@@ -32,6 +32,7 @@ public class JwtAuthenticationConverter implements ServerAuthenticationConverter
             .filter(header -> header.startsWith(BEARER_PREFIX))
             .map(header -> header.substring(BEARER_PREFIX.length()))
             .flatMap(token -> {
+                log.info("token jwt {}", token);
                 if (!jwtUtil.isTokenValid(token)) {
                     log.warn("Invalid JWT token from: {}",
                         exchange.getRequest().getPath());
@@ -41,7 +42,7 @@ public class JwtAuthenticationConverter implements ServerAuthenticationConverter
                 String userId = jwtUtil.extractUserId(token);
                 String role   = jwtUtil.extractRole(token);
 
-                log.debug("JWT validated: userId={}, role={}", userId, role);
+                log.info("JWT validated: userId={}, role={}", userId, role);
 
                 List<GrantedAuthority> authorities = List.of(
                     new SimpleGrantedAuthority("ROLE_" + role)

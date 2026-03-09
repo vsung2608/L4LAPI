@@ -26,6 +26,7 @@ import com.v1no.LJL.auth_service.repository.RefreshTokenRepository;
 import com.v1no.LJL.auth_service.repository.UserCredentialRepository;
 import com.v1no.LJL.auth_service.security.JwtService;
 import com.v1no.LJL.auth_service.service.AuthService;
+import com.v1no.LJL.auth_service.service.RefreshTokenService;
 import com.v1no.LJL.common.event.VerificationEmailEvent;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor   
 public class AuthServiceImpl implements AuthService {
+    private final RefreshTokenService refreshTokenService;
     private final UserCredentialRepository userCredentialRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
@@ -111,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
         userCredentialRepository.save(user);
         
         String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        String refreshToken = refreshTokenService.createRefreshToken(user);
         
         return new AuthResponse(accessToken, refreshToken);
     }

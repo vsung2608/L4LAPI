@@ -13,11 +13,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-    @Value("{app.security.jwt.secrets}")
+    @Value("${app.security.jwt.secrets}")
     private String secretKeys;
 
     public Claims extractAllClaims(String token) {
@@ -34,6 +36,7 @@ public class JwtUtil {
             Claims claims = extractAllClaims(token);
             return !claims.getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
+            log.error("JWT validation error", e);
             return false;
         }
     }
@@ -43,7 +46,8 @@ public class JwtUtil {
     }
 
     public String extractUserId(String token) {
-        return extractAllClaims(token).get("role", String.class);
+        log.info("co vao day nhe");
+        return extractAllClaims(token).get("userId", String.class);
     }
 
     public String extractRole(String token) {

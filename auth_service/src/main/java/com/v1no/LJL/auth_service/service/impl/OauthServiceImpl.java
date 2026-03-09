@@ -143,15 +143,11 @@ public class OauthServiceImpl implements OauthService {
         return user;
     }
     
-    /**
-     * Create new user from Google OAuth
-     */
     private UserCredential createUserFromOAuth(GoogleUserInfo googleUser) {
         String username = generateUsername(googleUser.getEmail());
         String randomPassword = generateRandomPassword();
         
         UserCredential user = UserCredential.builder()
-            .username(googleUser.getEmail())
             .username(username)
             .passwordHash(passwordEncoder.encode(randomPassword))
             .emailVerified(googleUser.getVerifiedEmail())

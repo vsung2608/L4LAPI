@@ -26,7 +26,7 @@ public class AuthenticationFilter implements GatewayFilterFactory<Authentication
                     .map(r -> r.replace("ROLE_", ""))
                     .orElse("");
 
-                log.debug("Injecting headers: userId={}, role={}", userId, role);
+                log.info("Injecting headers: userId={}, role={}", userId, role);
 
                 ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                     .headers(headers -> {
@@ -38,7 +38,8 @@ public class AuthenticationFilter implements GatewayFilterFactory<Authentication
                     .build();
 
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());
-            });
+            })
+            .switchIfEmpty(chain.filter(exchange));
     }
 
     @Override

@@ -43,9 +43,14 @@ public class SecurityConfig {
 
             .authorizeExchange(exchanges -> exchanges
                 .pathMatchers(
-                    "/api/v1/auth/login",
-                    "/api/v1/auth/register",
-                    "/api/v1/auth/refresh-token"
+                    "/api/v1/auth/**",
+                    "/actuator/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/api-docs/**",
+                    "/aggregate/**",
+                    "/eureka/**",
+                    "/webjars/**"
                 ).permitAll()
 
                 .pathMatchers(HttpMethod.GET, EndPoints.PUBLIC_GET_API).permitAll()
@@ -77,7 +82,6 @@ public class SecurityConfig {
 
         filter.setServerAuthenticationConverter(jwtAuthenticationConverter);
 
-        // Không redirect về login page — trả 401 JSON
         filter.setAuthenticationFailureHandler(
             (exchange, exception) -> onAuthenticationFailure(exchange.getExchange(), exception)
         );

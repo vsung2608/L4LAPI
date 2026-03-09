@@ -15,82 +15,76 @@ app:
       secrets: 7128ba29ccf93f7ea1188b0134db46f4f87b46f1d56766e3f7fef6197bd286c1
 
 management:
-  tracing:
-    sampling:
-      probability: 1.0
   endpoints:
     web:
       exposure:
-        include: prometheus
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/bookhaven
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
-      routes:
-        ## Auth Service Route
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/v1/auth/**
-        ## Auth Service Swagger Route
-        - id: auth-service-swagger
-          uri: http://localhost:8080
-          predicates:
-            - Path=/aggregate/auth-service/v3/api-docs
-          filters:
-            - SetPath=/api-docs
+      server:
+        webflux:
+          default-filters:
+          - AuthenticationFilter
+          routes:
+            ## Auth Service Route
+            - id: auth-service
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api/v1/auth/**
+            ## Auth Service Swagger Route
+            - id: auth-service-swagger
+              uri: http://localhost:8080
+              predicates:
+                - Path=/aggregate/auth-service/v3/api-docs
+              filters:
+                - SetPath=/api-docs
 
-        ## User Service Route
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/api/v1/users/**, /api/v1/users
-        ## User Service Swagger Route
-        - id: user-service-swagger
-          uri: http://localhost:8070
-          predicates:
-            - Path=/aggregate/user-service/v3/api-docs
-          filters:
-            - SetPath=/api-docs
+            ## User Service Route
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/v1/users/**, /api/v1/users
+            ## User Service Swagger Route
+            - id: user-service-swagger
+              uri: http://localhost:8070
+              predicates:
+                - Path=/aggregate/user-service/v3/api-docs
+              filters:
+                - SetPath=/api-docs
 
-        ## Learning Service Route
-        - id: learning-service
-          uri: lb://learning-service
-          predicates:
-            - Path=/api/v1/learnings/**, /api/v1/learnings
-        ## Learning Service Swagger Route
-        - id: learning-service-swagger
-          uri: http://localhost:8090
-          predicates:
-            - Path=/aggregate/learning-service/v3/api-docs
-          filters:
-            - SetPath=/api-docs
+            ## Learning Service Route
+            - id: learning-service
+              uri: lb://learning-service
+              predicates:
+                - Path=/api/v1/lessons/**, /api/v1/categories/**, /api/v1/sentences/**, /api/v1/lessons, /api/v1/categories, /api/v1/sentences
+            ## Learning Service Swagger Route
+            - id: learning-service-swagger
+              uri: http://localhost:8090
+              predicates:
+                - Path=/aggregate/learning-service/v3/api-docs
+              filters:
+                - SetPath=/api-docs
 
-        ## Auth Service Route
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/v1/auth/**
-        ## Discovery Server Route
-        - id: discovery-server
-          uri: http://localhost:8761
-          predicates:
-            - Path=/eureka/web
-          filters:
-            - SetPath=/
-        ## Discovery Server Route Static Source
-        - id: discovery-server-static
-          uri: http://localhost:8761
-          predicates:
-            - Path=/eureka/**
+            ## Discovery Server Route
+            - id: discovery-server
+              uri: http://localhost:8761
+              predicates:
+                - Path=/eureka/web
+              filters:
+                - SetPath=/
+            ## Discovery Server Route Static Source
+            - id: discovery-server-static
+              uri: http://localhost:8761
+              predicates:
+                - Path=/eureka/**
 
 springdoc:
   swagger-ui:
@@ -133,5 +127,8 @@ resilience4j:
         wait-duration: 5s
 
 logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.web.reactive: DEBUG
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%thread]){cyan} %clr(%logger{36}){yellow} %clr([%file:%line]){magenta} - %msg%n"
