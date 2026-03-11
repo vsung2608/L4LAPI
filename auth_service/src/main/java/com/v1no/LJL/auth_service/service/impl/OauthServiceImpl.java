@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.v1no.LJL.auth_service.client.GoogleOAuthClient;
+import com.v1no.LJL.auth_service.client.GoogleUserInfoClient;
 import com.v1no.LJL.auth_service.exception.OAuthException;
 import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
 import com.v1no.LJL.auth_service.model.dto.response.GoogleTokenResponse;
@@ -38,6 +39,7 @@ public class OauthServiceImpl implements OauthService {
     private final RefreshTokenService refreshTokenService;
     private final UserCredentialRepository userRepository;
     private final OauthConnectionRepository oauthRepository;
+    private final GoogleUserInfoClient googleUserInfoClient;
     private final GoogleOAuthClient googleClient;
     private final PasswordEncoder passwordEncoder;
 
@@ -72,7 +74,7 @@ public class OauthServiceImpl implements OauthService {
             );
             
             log.debug("Fetching user info from Google");
-            GoogleUserInfo googleUser = googleClient.getUserInfo(
+            GoogleUserInfo googleUser = googleUserInfoClient.getUserInfo(
                 "Bearer " + tokenResponse.getAccessToken()
             );
             

@@ -34,15 +34,4 @@ public interface GoogleOAuthClient {
         @RequestParam("redirect_uri") String redirectUri,
         @RequestParam("grant_type") String grantType
     );
-
-    /**
-     * Get user info from Google
-     * 
-     * @param authorization Bearer token (access_token từ Google)
-     * @return GoogleUserInfo chứa thông tin user
-     */
-    @GetMapping("/oauth2/v2/userinfo")
-    GoogleUserInfo getUserInfo(
-        @RequestHeader("Authorization") String authorization
-    );
 }
