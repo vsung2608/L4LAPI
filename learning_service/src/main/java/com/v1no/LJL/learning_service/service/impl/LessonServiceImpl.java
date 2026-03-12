@@ -119,15 +119,16 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LessonPreviewResponse> findByCategoryId(UUID categoryId, UUID userId) {
-        if (!categoryRepository.existsById(categoryId)) {
-            throw new ResourceNotFoundException("Category not found: " + categoryId);
-        }
+    public CategoryWithLessonsResponse findByCategoryId(UUID categoryId, UUID userId) {
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + categoryId));
 
         List<Lesson> lessons = lessonRepository
-            .findAllByCategoryIdAndStatus(categoryId, ContentStatus.ACTIVE);
+            .findAllByCategoryId(categoryId);
 
-        if (lessons.isEmpty()) return List.of();
+        if (lessons.isEmpty()){
+            return new CategoryWithLessonsResponse(categoryId, category.getName(), category.getDescription(), category.getThumbnailUrl(), category.getDisplayOrder(), List.of());
+        }
 
         // Bulk fetch progress — 1 call duy nhất, không N+1
         List<UUID> lessonIds = lessons.stream()
@@ -140,12 +141,21 @@ public class LessonServiceImpl implements LessonService {
             .stream()
             .collect(Collectors.toMap(LessonProgressSummary::lessonId, Function.identity()));
 
-        return lessons.stream()
+        List<LessonPreviewResponse> list = lessons.stream()
             .map(lesson -> lessonMapper.toPreview(
                 lesson,
                 progressMap.get(lesson.getId())
             ))
             .toList();
+
+        return new CategoryWithLessonsResponse(
+            categoryId, 
+            category.getName(), 
+            category.getDescription(), 
+            category.getThumbnailUrl(), 
+            category.getDisplayOrder(), 
+            list
+        );
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.v1no.LJL.common.dto.ApiResponse;
 import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
+import com.v1no.LJL.learning_service.model.dto.response.CategoryWithLessonsResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
@@ -92,7 +93,7 @@ public class LessonController {
 
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "Get all active lessons by category")
-    public ResponseEntity<ApiResponse<List<LessonPreviewResponse>>> findByCategoryId(
+    public ResponseEntity<ApiResponse<CategoryWithLessonsResponse>> findByCategoryId(
         @PathVariable UUID categoryId,
         @RequestHeader("X-User-Id") UUID userId
     ) {

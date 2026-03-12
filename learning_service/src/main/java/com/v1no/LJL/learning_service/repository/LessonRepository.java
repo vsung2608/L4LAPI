@@ -27,16 +27,12 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
     @Query("""
         SELECT l FROM Lesson l
         WHERE l.category.id = :categoryId
-          AND l.status = :status
         ORDER BY l.displayOrder ASC
         """)
-    List<Lesson> findAllByCategoryIdAndStatus(
-        @Param("categoryId") UUID categoryId,
-        @Param("status") ContentStatus status
-    );
+    List<Lesson> findAllByCategoryId(@Param("categoryId") UUID categoryId);
 
     @EntityGraph(value = "Lesson.withSentences")
-    @Query("SELECT l FROM Lesson l WHERE l.id = :id AND l.status = 'ACTIVE'")
+    @Query("SELECT l FROM Lesson l WHERE l.id = :id")
     Optional<Lesson> findActiveByIdWithSentences(@Param("id") UUID id);
 
     @EntityGraph(value = "Lesson.full")
@@ -60,14 +56,12 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
         """)
     Page<Lesson> findAllActive(Pageable pageable);
 
-    List<Lesson> findAllByCategoryId(UUID categoryId);
-
     @EntityGraph(value = "Lesson.withCategory")
     @Query("""
         SELECT l FROM Lesson l
         WHERE l.category.id IN :categoryIds
-        AND l.status = 'ACTIVE'
         ORDER BY l.category.id ASC, l.displayOrder ASC
         """)
     List<Lesson> findActiveByCategoryIdIn(@Param("categoryIds") List<UUID> categoryIds);
+
 }

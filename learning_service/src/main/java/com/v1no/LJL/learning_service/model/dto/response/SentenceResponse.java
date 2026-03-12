@@ -7,7 +7,7 @@ public record SentenceResponse(
     UUID id,
     UUID lessonId,
     String content,
-    String furigana,
+    String transcription,
     String translation,
     Integer startTimeSeconds,
     Integer endTimeSeconds,

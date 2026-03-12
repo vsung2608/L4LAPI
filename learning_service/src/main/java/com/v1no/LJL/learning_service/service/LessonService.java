@@ -9,12 +9,12 @@ import org.springframework.data.domain.Pageable;
 import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.learning_service.model.dto.request.CreateLessonRequest;
 import com.v1no.LJL.learning_service.model.dto.request.UpdateLessonRequest;
+import com.v1no.LJL.learning_service.model.dto.response.CategoryWithLessonsResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LanguageCatalogResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonPreviewResponse;
 import com.v1no.LJL.learning_service.model.dto.response.LessonSummaryResponse;
 import com.v1no.LJL.learning_service.model.enums.JlptLevel;
-import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 
 public interface LessonService {
 
@@ -28,7 +28,7 @@ public interface LessonService {
 
     LessonDetailResponse findDetailById(UUID id);
 
-    List<LessonPreviewResponse> findByCategoryId(UUID categoryId, UUID userId);
+    CategoryWithLessonsResponse findByCategoryId(UUID categoryId, UUID userId);
 
     List<LessonSummaryResponse> findByCategoryIdForAdmin(UUID categoryId);
 
