@@ -4,14 +4,15 @@ import com.v1no.LJL.learning_service.model.dto.request.CardDeckRequest;
 import com.v1no.LJL.learning_service.model.dto.response.CardDeckDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.CardDeckResponse;
 import com.v1no.LJL.learning_service.model.enums.LanguageCode;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.UUID;
 
 public interface CardDeckService {
 
     CardDeckResponse create(CardDeckRequest request);
-    CardDeckDetailResponse getById(Long id);
-    Page<CardDeckResponse> getAll(LanguageCode language, Pageable pageable);
-    CardDeckResponse update(Long id, CardDeckRequest request);
-    void delete(Long id);
+    CardDeckDetailResponse getById(UUID id);
+    List<CardDeckResponse> getAll(UUID userId,LanguageCode language);
+    CardDeckResponse update(UUID id, CardDeckRequest request);
+    void delete(UUID id);
 }

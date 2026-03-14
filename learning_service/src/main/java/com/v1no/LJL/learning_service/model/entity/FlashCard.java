@@ -1,6 +1,7 @@
 package com.v1no.LJL.learning_service.model.entity;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -35,11 +36,14 @@ import lombok.Setter;
 public class FlashCard {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String transcription;

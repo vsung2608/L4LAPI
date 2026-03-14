@@ -1,5 +1,7 @@
 package com.v1no.LJL.learning_service.model.dto.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +15,7 @@ public record CardDeckRequest(
         @Size(max = 255, message = "Title must not exceed 255 characters")
         String title,
 
-        String thumbnailUrl,
+        MultipartFile thumbnail,
 
         String description,
 

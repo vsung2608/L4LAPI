@@ -1,6 +1,8 @@
 // FlashCardRequest.java
 package com.v1no.LJL.learning_service.model.dto.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -10,6 +12,8 @@ public record FlashCardRequest(
 
         @NotBlank(message = "Content must not be blank")
         String content,
+
+        MultipartFile thumbnail,
 
         @NotBlank(message = "Transcription must not be blank")
         String transcription,

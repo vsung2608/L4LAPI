@@ -1,5 +1,6 @@
 package com.v1no.LJL.learning_service.mapper;
 
+import com.v1no.LJL.common.dto.CardProgressResponse;
 import com.v1no.LJL.learning_service.model.dto.request.FlashCardRequest;
 import com.v1no.LJL.learning_service.model.dto.response.FlashCardResponse;
 import com.v1no.LJL.learning_service.model.entity.CardDeck;
@@ -40,7 +41,7 @@ public class FlashCardMapper {
         card.setDisplayOrder(request.displayOrder());
     }
 
-    public FlashCardResponse toResponse(FlashCard card) {
+    public FlashCardResponse toResponse(FlashCard card, CardProgressResponse progress) {
         return FlashCardResponse.builder()
                 .id(card.getId())
                 .content(card.getContent())
@@ -53,13 +54,12 @@ public class FlashCardMapper {
                 .hint(card.getHint())
                 .difficulty(card.getDifficulty())
                 .displayOrder(card.getDisplayOrder())
+                .mark(progress != null ? progress.mark() : null)
+                .studyCount(progress != null ? progress.studyCount() : null)
                 .deckId(card.getDeck().getId())
                 .createdAt(card.getCreatedAt())
                 .updatedAt(card.getUpdatedAt())
                 .build();
     }
 
-    public List<FlashCardResponse> toResponseList(List<FlashCard> cards) {
-        return cards.stream().map(this::toResponse).toList();
-    }
 }

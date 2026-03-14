@@ -5,9 +5,10 @@ import com.v1no.LJL.learning_service.model.dto.response.FlashCardResponse;
 import com.v1no.LJL.learning_service.service.FlashCardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,36 +20,35 @@ public class FlashCardController {
 
     private final FlashCardService flashCardService;
 
-    // Nested resource: /decks/{deckId}/cards
     @PostMapping("/decks/{deckId}/cards")
     public ResponseEntity<FlashCardResponse> create(
-            @PathVariable Long deckId,
-            @Valid @RequestBody FlashCardRequest request) {
+            @PathVariable UUID deckId,
+            @Valid @ModelAttribute FlashCardRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(flashCardService.create(deckId, request));
     }
 
     @GetMapping("/decks/{deckId}/cards")
-    public ResponseEntity<Page<FlashCardResponse>> getAllByDeck(
-            @PathVariable Long deckId,
-            @PageableDefault(size = 20, sort = "displayOrder") Pageable pageable) {
-        return ResponseEntity.ok(flashCardService.getAllByDeck(deckId, pageable));
+    public ResponseEntity<List<FlashCardResponse>> getAllByDeck(
+            @PathVariable UUID deckId,
+            @RequestHeader("X-User-Id") UUID userId) {
+        return ResponseEntity.ok(flashCardService.getAllByDeck(userId, deckId));
     }
 
     @GetMapping("/cards/{id}")
-    public ResponseEntity<FlashCardResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<FlashCardResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(flashCardService.getById(id));
     }
 
     @PutMapping("/cards/{id}")
     public ResponseEntity<FlashCardResponse> update(
-            @PathVariable Long id,
-            @Valid @RequestBody FlashCardRequest request) {
+            @PathVariable UUID id,
+            @Valid @ModelAttribute FlashCardRequest request) {
         return ResponseEntity.ok(flashCardService.update(id, request));
     }
 
     @DeleteMapping("/cards/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         flashCardService.delete(id);
         return ResponseEntity.noContent().build();
     }

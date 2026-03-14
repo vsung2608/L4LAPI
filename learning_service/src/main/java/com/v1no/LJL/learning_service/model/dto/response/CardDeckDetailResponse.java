@@ -5,10 +5,11 @@ import lombok.Builder;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Builder
 public record CardDeckDetailResponse(
-        Long id,
+        UUID id,
         String title,
         String thumbnailUrl,
         String description,

@@ -2,11 +2,13 @@ package com.v1no.LJL.learning_service.model.dto.response;
 
 import lombok.Builder;
 import java.time.Instant;
+import java.util.UUID;
 
 @Builder
 public record FlashCardResponse(
-        Long id,
+        UUID id,
         String content,
+        String thumbnail,
         String transcription,
         String translation,
         String exampleLang,
@@ -16,7 +18,9 @@ public record FlashCardResponse(
         String hint,
         String difficulty,
         Integer displayOrder,
-        Long deckId,
+        String mark,
+        Integer studyCount,
+        UUID deckId,
         Instant createdAt,
         Instant updatedAt
 ) {}

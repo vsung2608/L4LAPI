@@ -3,6 +3,7 @@ package com.v1no.LJL.learning_service.model.entity;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.v1no.LJL.learning_service.model.enums.LanguageCode;
 
@@ -35,8 +36,8 @@ import lombok.Setter;
 public class CardDeck {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, length = 255)
     private String title;
