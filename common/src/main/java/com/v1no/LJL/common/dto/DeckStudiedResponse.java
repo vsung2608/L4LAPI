@@ -1,4 +1,4 @@
-package com.v1no.ljl.progress_service.model.dto.response;
+package com.v1no.LJL.common.dto;
 
 import lombok.Builder;
 import java.util.UUID;

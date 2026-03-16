@@ -3,12 +3,12 @@ package com.v1no.ljl.progress_service.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.v1no.LJL.common.dto.DeckProgressResponse;
+import com.v1no.LJL.common.dto.DeckStudiedResponse;
 import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.ljl.progress_service.model.dto.request.StartLessonRequest;
 import com.v1no.ljl.progress_service.model.dto.request.StudyRecordRequest;
 import com.v1no.ljl.progress_service.model.dto.request.UpdateProgressRequest;
-import com.v1no.ljl.progress_service.model.dto.response.DeckProgressResponse;
-import com.v1no.ljl.progress_service.model.dto.response.DeckStudiedResponse;
 import com.v1no.ljl.progress_service.model.dto.response.LessonProgressResponse;
 import com.v1no.ljl.progress_service.model.dto.response.StudyRecordResponse;
 import com.v1no.ljl.progress_service.model.enums.LearningMode;

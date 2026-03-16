@@ -1,5 +1,6 @@
 package com.v1no.LJL.learning_service.controller;
 
+import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.learning_service.model.dto.request.CardDeckRequest;
 import com.v1no.LJL.learning_service.model.dto.response.CardDeckDetailResponse;
 import com.v1no.LJL.learning_service.model.dto.response.CardDeckResponse;
@@ -8,11 +9,9 @@ import com.v1no.LJL.learning_service.service.CardDeckService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,17 +28,19 @@ public class CardDeckController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cardDeckService.create(request));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CardDeckDetailResponse> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(cardDeckService.getById(id));
+    @GetMapping
+    public ResponseEntity<List<CardDeckResponse>> getAll(
+            @RequestParam(required = false) LanguageCode language,
+            @RequestHeader("X-User-Id") UUID userId) {
+        return ResponseEntity.ok(cardDeckService.getAll(userId, language));
     }
 
-    @GetMapping
-    public ResponseEntity<Page<CardDeckResponse>> getAll(
-            @RequestParam(required = false) LanguageCode language,
-            @PageableDefault(size = 20, sort = "createdAt") Pageable pageable,
-            @RequestHeader("X-User-Id") UUID userId) {
-        return ResponseEntity.ok(cardDeckService.getAll(userId, language, pageable));
+    @GetMapping("/admin")
+    public ResponseEntity<PageResponse<CardDeckResponse>> getAllForAdmin(
+            @RequestParam(required = false, defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "en") String language) {
+        return ResponseEntity.ok(cardDeckService.getAllForAdmin(size, page, language));
     }
 
     @PutMapping("/{id}")

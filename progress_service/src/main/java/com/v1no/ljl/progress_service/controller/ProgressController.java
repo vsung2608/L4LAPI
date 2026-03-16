@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.v1no.LJL.common.dto.ApiResponse;
+import com.v1no.LJL.common.dto.DeckProgressResponse;
+import com.v1no.LJL.common.dto.DeckStudiedResponse;
 import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.ljl.progress_service.model.dto.request.StartLessonRequest;
 import com.v1no.ljl.progress_service.model.dto.request.StudyRecordRequest;
 import com.v1no.ljl.progress_service.model.dto.request.UpdateProgressRequest;
-import com.v1no.ljl.progress_service.model.dto.response.DeckProgressResponse;
-import com.v1no.ljl.progress_service.model.dto.response.DeckStudiedResponse;
 import com.v1no.ljl.progress_service.model.dto.response.LessonProgressResponse;
 import com.v1no.ljl.progress_service.model.dto.response.StudyRecordResponse;
 import com.v1no.ljl.progress_service.model.enums.LearningMode;
@@ -125,22 +125,22 @@ public class ProgressController {
     }
 
     @GetMapping("/decks/{userId}/{deckId}")
-    public ResponseEntity<DeckProgressResponse> getDeckProgress(
+    public ResponseEntity<ApiResponse<DeckProgressResponse>> getDeckProgress(
             @PathVariable UUID userId,
             @PathVariable UUID deckId) {
 
         return ResponseEntity.ok(
-                progressService.getDeckProgress(userId, deckId)
+                ApiResponse.ok(progressService.getDeckProgress(userId, deckId))
         );
     }
 
     @PostMapping("/users/{userId}/decks")
-    public ResponseEntity<List<DeckStudiedResponse>> getStudiedDecks(
+    public ResponseEntity<ApiResponse<List<DeckStudiedResponse>>> getStudiedDecks(
             @PathVariable UUID userId,
             @RequestBody List<UUID> deckIds) {
 
         return ResponseEntity.ok(
-                progressService.getStudiedDecks(userId, deckIds)
+                ApiResponse.ok(progressService.getStudiedDecks(userId, deckIds))
         );
     }
 }

@@ -2,6 +2,7 @@ package com.v1no.LJL.learning_service.service.impl;
 
 import com.v1no.LJL.common.dto.CardProgressResponse;
 import com.v1no.LJL.common.dto.DeckProgressResponse;
+import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.common.exception.ResourceNotFoundException;
 import com.v1no.LJL.learning_service.client.ProgressServiceClient;
 import com.v1no.LJL.learning_service.mapper.FlashCardMapper;
@@ -24,6 +25,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,15 +63,6 @@ public class FlashCardServiceImpl implements FlashCardService {
 
     @Override
     @Transactional(readOnly = true)
-    public FlashCardResponse getById(UUID id) {
-        log.debug("Fetching FlashCard with id: {}", id);
-        FlashCard card = flashCardRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot find flashcard with ID::%s".formatted(id)));
-        return flashCardMapper.toResponse(card, null);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<FlashCardResponse> getAllByDeck(UUID userId, UUID deckId) {
         log.debug("Fetching FlashCards for deck: {}, userId: {}", deckId, userId);
 
@@ -92,6 +88,28 @@ public class FlashCardServiceImpl implements FlashCardService {
         return cards.stream()
                 .map(card -> flashCardMapper.toResponse(card, progressMap.get(card.getId())))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<FlashCardResponse> getAllByDeckForAdmin(int page, int size, UUID deckId){
+        if (!cardDeckRepository.existsById(deckId)) {
+            throw new ResourceNotFoundException(
+                    "Cannot find card deck with ID::%s".formatted(deckId));
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<FlashCard> pageResponse = flashCardRepository.findAllByDeckId(deckId, pageable);
+
+        return PageResponse.<FlashCardResponse>builder()
+            .data(pageResponse.getContent().stream()
+                    .map(fl -> flashCardMapper.toResponse(fl, null))
+                    .toList())
+            .page(page)
+            .totalElements(pageResponse.getTotalElements())
+            .totalPages(pageResponse.getTotalPages())
+            .size(size)
+            .build();
     }
 
     @Override

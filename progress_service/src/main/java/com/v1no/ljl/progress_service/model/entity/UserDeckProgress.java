@@ -4,9 +4,11 @@ package com.v1no.ljl.progress_service.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.v1no.ljl.progress_service.model.enums.CardMark;
 
 @Entity
@@ -37,6 +39,11 @@ public class UserDeckProgress {
     @Column(name = "total_studied", nullable = false)
     @Builder.Default
     private Integer totalStudied = 0;
+
+    @OneToMany(mappedBy = "userDeckProgress")
+    @JsonManagedReference
+    @Builder.Default
+    private List<UserCardRecord> records = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

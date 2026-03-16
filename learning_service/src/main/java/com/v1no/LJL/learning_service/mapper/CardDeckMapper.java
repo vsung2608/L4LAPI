@@ -49,7 +49,7 @@ public class CardDeckMapper {
                 .thumbnailUrl(deck.getThumbnailUrl())
                 .description(deck.getDescription())
                 .language(deck.getLanguage())
-                .cards(flashCardMapper.toResponseList(deck.getCards()))
+                .cards(deck.getCards().stream().map(c -> flashCardMapper.toResponse(c, null)).toList())
                 .createdAt(deck.getCreatedAt())
                 .updatedAt(deck.getUpdatedAt())
                 .build();

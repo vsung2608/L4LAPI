@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/pronunciation")
+@RequestMapping("/api/v1/pronunciation")
 public class PronunciationController {
 
     private final PronunciationService pronunciationService;

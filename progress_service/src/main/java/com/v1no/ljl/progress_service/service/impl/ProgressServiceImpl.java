@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.v1no.LJL.common.dto.DeckProgressResponse;
+import com.v1no.LJL.common.dto.DeckStudiedResponse;
 import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.LJL.common.exception.BusinessException;
 import com.v1no.LJL.common.exception.ResourceNotFoundException;
@@ -17,8 +19,6 @@ import com.v1no.ljl.progress_service.mapper.StudyProgressMapper;
 import com.v1no.ljl.progress_service.model.dto.request.StartLessonRequest;
 import com.v1no.ljl.progress_service.model.dto.request.StudyRecordRequest;
 import com.v1no.ljl.progress_service.model.dto.request.UpdateProgressRequest;
-import com.v1no.ljl.progress_service.model.dto.response.DeckProgressResponse;
-import com.v1no.ljl.progress_service.model.dto.response.DeckStudiedResponse;
 import com.v1no.ljl.progress_service.model.dto.response.LessonProgressResponse;
 import com.v1no.ljl.progress_service.model.dto.response.StudyRecordResponse;
 import com.v1no.ljl.progress_service.model.entity.UserCardRecord;

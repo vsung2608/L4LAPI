@@ -1,7 +1,7 @@
 package com.v1no.ljl.progress_service.mapper;
 
-import com.v1no.ljl.progress_service.model.dto.response.CardProgressResponse;
-import com.v1no.ljl.progress_service.model.dto.response.DeckProgressResponse;
+import com.v1no.LJL.common.dto.CardProgressResponse;
+import com.v1no.LJL.common.dto.DeckProgressResponse;
 import com.v1no.ljl.progress_service.model.dto.response.StudyRecordResponse;
 import com.v1no.ljl.progress_service.model.entity.UserCardRecord;
 import com.v1no.ljl.progress_service.model.entity.UserDeckProgress;
@@ -13,10 +13,10 @@ import java.util.List;
 public class StudyProgressMapper {
 
     public DeckProgressResponse toDeckProgressResponse(UserDeckProgress progress) {
-        List<CardProgressResponse> records = progress.getCards().stream()
+        List<CardProgressResponse> records = progress.getRecords().stream()
                 .map(r -> new CardProgressResponse(
                         r.getFlashCardId(),
-                        r.getMark(),
+                        r.getMark().name(),
                         r.getStudyCount()
                 ))
                 .toList();

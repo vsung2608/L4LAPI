@@ -1,6 +1,7 @@
 package com.v1no.LJL.learning_service.service.impl;
 
 import com.v1no.LJL.common.dto.DeckStudiedResponse;
+import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.common.exception.ResourceNotFoundException;
 import com.v1no.LJL.learning_service.client.ProgressServiceClient;
 import com.v1no.LJL.learning_service.mapper.CardDeckMapper;
@@ -14,6 +15,7 @@ import com.v1no.LJL.learning_service.repository.CardDeckRepository;
 import com.v1no.LJL.learning_service.service.CardDeckService;
 import com.v1no.LJL.learning_service.util.CloudinaryUtil;
 
+import jakarta.persistence.EnumType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +25,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,14 +57,6 @@ public class CardDeckServiceImpl implements CardDeckService {
         }
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public CardDeckDetailResponse getById(UUID id) {
-        log.debug("Fetching CardDeck with id: {}", id);
-        CardDeck deck = cardDeckRepository.findByIdWithCards(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot find card with ID::%s".formatted(id)));
-        return cardDeckMapper.toDetailResponse(deck);
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -85,8 +82,25 @@ public class CardDeckServiceImpl implements CardDeckService {
                 .collect(Collectors.toMap(DeckStudiedResponse::deckId, DeckStudiedResponse::started));
 
         return decks.stream()
-                .map(deck -> cardDeckMapper.toResponse(deck, progressMap.get(deck.getId())))
+                .map(deck -> cardDeckMapper.toResponse(deck, progressMap.getOrDefault(deck.getId(), false)))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<CardDeckResponse> getAllForAdmin(int page, int size, String language){
+        LanguageCode languageCode = EnumType.valueOf(LanguageCode.class, language);
+        Pageable pageable = PageRequest.of(size, page - 1);
+        Page<CardDeck> pageResponse = cardDeckRepository.findAllByLanguage(languageCode, pageable);
+        return PageResponse.<CardDeckResponse>builder()
+                .data(pageResponse.getContent().stream()
+                        .map(c -> cardDeckMapper.toResponse(c, false))
+                        .toList())
+                .page(page)
+                .size(size)
+                .totalElements(pageResponse.getTotalElements())
+                .totalPages(pageResponse.getTotalPages())
+                .build();
     }
 
     @Override

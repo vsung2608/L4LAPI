@@ -1,6 +1,8 @@
 package com.v1no.LJL.learning_service.controller;
 
+import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.learning_service.model.dto.request.FlashCardRequest;
+import com.v1no.LJL.learning_service.model.dto.response.CardDeckResponse;
 import com.v1no.LJL.learning_service.model.dto.response.FlashCardResponse;
 import com.v1no.LJL.learning_service.service.FlashCardService;
 import jakarta.validation.Valid;
@@ -35,9 +37,12 @@ public class FlashCardController {
         return ResponseEntity.ok(flashCardService.getAllByDeck(userId, deckId));
     }
 
-    @GetMapping("/cards/{id}")
-    public ResponseEntity<FlashCardResponse> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(flashCardService.getById(id));
+    @GetMapping("/decks/{deckId}/cards/admin")
+    public ResponseEntity<PageResponse<FlashCardResponse>> getAllForAdmin(
+            @RequestParam(required = false, defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @PathVariable UUID deckId) {
+        return ResponseEntity.ok(flashCardService.getAllByDeckForAdmin(page, size, deckId));
     }
 
     @PutMapping("/cards/{id}")
