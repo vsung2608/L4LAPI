@@ -21,9 +21,11 @@ import com.v1no.LJL.auth_service.model.dto.request.RegisterRequest;
 import com.v1no.LJL.auth_service.model.dto.response.AuthResponse;
 import com.v1no.LJL.auth_service.model.entity.RefreshToken;
 import com.v1no.LJL.auth_service.model.entity.UserCredential;
+import com.v1no.LJL.auth_service.model.entity.UserProfile;
 import com.v1no.LJL.auth_service.model.enums.Role;
 import com.v1no.LJL.auth_service.repository.RefreshTokenRepository;
 import com.v1no.LJL.auth_service.repository.UserCredentialRepository;
+import com.v1no.LJL.auth_service.repository.UserProfileRepository;
 import com.v1no.LJL.auth_service.security.JwtService;
 import com.v1no.LJL.auth_service.service.AuthService;
 import com.v1no.LJL.auth_service.service.RefreshTokenService;
@@ -38,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor   
 public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
+    private final UserProfileRepository userProfileRepository;
     private final UserCredentialRepository userCredentialRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
@@ -139,8 +142,10 @@ public class AuthServiceImpl implements AuthService {
 
         user.setEmailVerified(true);
         user.setVerificationToken(null);
-        userCredentialRepository.save(user);
-
+        UserCredential saved = userCredentialRepository.save(user);
+        if(userProfileRepository.existsById(saved.getId()))
+            userProfileRepository.save(UserProfile.builder().userCredential(saved).build());
+            
         return frontendUrl + "/auth/verify-success";
     }
 

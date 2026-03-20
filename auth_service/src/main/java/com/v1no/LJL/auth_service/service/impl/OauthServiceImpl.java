@@ -1,5 +1,6 @@
 package com.v1no.LJL.auth_service.service.impl;
 
+import com.v1no.LJL.auth_service.repository.UserProfileRepository;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import com.v1no.LJL.auth_service.model.entity.OAuthConnection;
 import com.v1no.LJL.auth_service.model.entity.OAuthConnection.OAuthProvider;
 import com.v1no.LJL.auth_service.model.enums.Role;
 import com.v1no.LJL.auth_service.model.entity.UserCredential;
+import com.v1no.LJL.auth_service.model.entity.UserProfile;
 import com.v1no.LJL.auth_service.repository.OauthConnectionRepository;
 import com.v1no.LJL.auth_service.repository.UserCredentialRepository;
 import com.v1no.LJL.auth_service.security.JwtService;
@@ -35,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OauthServiceImpl implements OauthService {
     
+    private final UserProfileRepository userProfileRepository;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final UserCredentialRepository userRepository;
@@ -158,13 +161,20 @@ public class OauthServiceImpl implements OauthService {
             .role(Role.USER)
             .failedLoginCount(0)
             .build();
+
+        UserCredential saved = userRepository.save(user);
+
+        UserProfile profile = UserProfile.builder()
+                .displayName(googleUser.getName())
+                .avatarUrl(googleUser.getPicture())
+                .userCredential(saved)
+                .build();
+
+        userProfileRepository.save(profile);
         
-        return userRepository.save(user);
+        return saved;
     }
-    
-    /**
-     * Create OAuth connection record
-     */
+
     private void createOAuthConnection(
         UserCredential user,
         GoogleTokenResponse tokenResponse,
@@ -193,9 +203,6 @@ public class OauthServiceImpl implements OauthService {
         log.debug("Created OAuth connection for user: {}", user.getUsername());
     }
     
-    /**
-     * Update existing OAuth connection with new tokens
-     */
     private void updateOAuthConnection(
         OAuthConnection connection,
         GoogleTokenResponse tokenResponse,
