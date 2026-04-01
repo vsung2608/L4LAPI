@@ -1,41 +1,45 @@
 package com.v1no.LJL.community_service.model.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+import com.v1no.LJL.community_service.model.enums.CommentTargetType;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "ratings", 
+@Table(name = "ratings",
        uniqueConstraints = @UniqueConstraint(
            columnNames = {"user_id", "target_type", "target_id"}
        ))
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Rating {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
     @Column(name = "user_id", nullable = false)
-    private Long userId;
-    
-    @Column(name = "target_id", nullable = false)
-    private Long targetId;
-    
+    private UUID userId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "target_type", nullable = false, length = 50)
+    private CommentTargetType targetType;
+
     @Column(nullable = false)
     private Integer score;
-    
+
     @Column(length = 1000)
     private String review;
-    
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
