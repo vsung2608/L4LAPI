@@ -1,0 +1,12 @@
+package com.v1no.LJL.community_service.model.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record EditMessageRequest(
+
+        @NotBlank(message = "Content must not be blank")
+        @Size(max = 5000, message = "Content must not exceed 5000 characters")
+        String content
+
+) {}
