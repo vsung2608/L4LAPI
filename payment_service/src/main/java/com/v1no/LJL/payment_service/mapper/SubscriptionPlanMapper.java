@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import com.v1no.LJL.payment_service.model.dto.request.CreateSubscriptionPlanRequest;
 import com.v1no.LJL.payment_service.model.dto.response.SubscriptionPlanResponse;
 import com.v1no.LJL.payment_service.model.entity.SubscriptionPlan;
-import com.v1no.LJL.payment_service.model.enums.PlanType;
 
 @Component
 public class SubscriptionPlanMapper {
@@ -19,7 +18,6 @@ public class SubscriptionPlanMapper {
             .price(request.getPrice())
             .durationDays(request.getDurationDays())
             .discount(request.getDiscount())
-            .type(PlanType.valueOf(request.getType()))
             .isActive(true)
             .build();
     }
@@ -29,11 +27,11 @@ public class SubscriptionPlanMapper {
             .id(plan.getId())
             .code(plan.getCode())
             .name(plan.getName())
+            .description(plan.getDescription())
             .price(plan.getPrice())
             .finalPrice(plan.getPrice().multiply(BigDecimal.valueOf(100 - plan.getDiscount()).divide(BigDecimal.valueOf(100))))
             .durationDays(plan.getDurationDays())
             .discount(plan.getDiscount())
-            .type(plan.getType().name())
             .isActive(plan.getIsActive())
             .createdAt(plan.getCreatedAt())
             .build();

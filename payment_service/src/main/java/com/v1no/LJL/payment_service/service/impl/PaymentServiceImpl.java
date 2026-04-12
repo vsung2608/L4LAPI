@@ -6,10 +6,12 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.payment_service.client.AuthServiceClient;
 import com.v1no.LJL.payment_service.mapper.PaymentMapper;
 import com.v1no.LJL.payment_service.model.dto.request.CreatePaymentRequest;
@@ -20,6 +22,7 @@ import com.v1no.LJL.payment_service.model.entity.Payment;
 import com.v1no.LJL.payment_service.model.entity.SubscriptionPlan;
 import com.v1no.LJL.payment_service.repository.PaymentRepository;
 import com.v1no.LJL.payment_service.repository.SubscriptionPlanRepository;
+import com.v1no.LJL.payment_service.service.PaymentService;
 import com.v1no.LJL.payment_service.service.VNPayService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PaymentServiceImpl {
+public class PaymentServiceImpl implements PaymentService{
     private final PaymentRepository paymentRepository;
     private final SubscriptionPlanRepository planRepository;
     private final VNPayService vnPayService;
@@ -89,7 +92,6 @@ public class PaymentServiceImpl {
         Payment payment = paymentRepository.findByOrderId(orderId)
             .orElseThrow(() -> new RuntimeException("Payment not found: " + orderId));
 
-        // Verify signature
         boolean isValid = vnPayService.verifyCallback(vnpParams);
 
         if (!isValid) {
@@ -118,11 +120,10 @@ public class PaymentServiceImpl {
                 .success(true)
                 .message("Payment successful")
                 .orderId(orderId)
-                .redirectUrl(frontendUrl + "/payment/success?orderId=" + orderId)
+                .redirectUrl(frontendUrl + "/checkout-notification?orderId=" + orderId)
                 .build();
 
         } else {
-            // Payment failed
             payment.markAsFailed();
             paymentRepository.save(payment);
 
@@ -153,9 +154,37 @@ public class PaymentServiceImpl {
 
 
     @Transactional(readOnly = true)
-    public Page<PaymentDetailResponse> getUserPayments(UUID userId, Pageable pageable) {
-        return paymentRepository.findByUserId(userId, pageable)
-            .map(paymentMapper::toDetailResponse);
+    public PageResponse<PaymentDetailResponse> getUserPayments(UUID userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Payment> pageResponse = paymentRepository.findByUserId(userId, pageable);
+
+        return PageResponse.<PaymentDetailResponse>builder()
+                    .data(pageResponse.getContent().stream()
+                    .map(paymentMapper::toDetailResponse)
+                    .toList()
+                )
+                .page(page)
+                .size(size)
+                .totalPages(pageResponse.getNumber())
+                .totalElements(pageResponse.getTotalElements())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse<PaymentDetailResponse> getPayments(int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Payment> pageResponse = paymentRepository.findAll(pageable);
+
+        return PageResponse.<PaymentDetailResponse>builder()
+                    .data(pageResponse.getContent().stream()
+                    .map(paymentMapper::toDetailResponse)
+                    .toList()
+                )
+                .page(page)
+                .size(size)
+                .totalPages(pageResponse.getNumber())
+                .totalElements(pageResponse.getTotalElements())
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -166,9 +195,6 @@ public class PaymentServiceImpl {
         return paymentMapper.toDetailResponse(payment);
     }
 
-    /**
-     * Get payment by order ID
-     */
     @Transactional(readOnly = true)
     public PaymentDetailResponse getPaymentByOrderId(String orderId) {
         Payment payment = paymentRepository.findByOrderId(orderId)

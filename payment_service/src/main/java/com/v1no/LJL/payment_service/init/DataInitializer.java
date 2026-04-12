@@ -6,7 +6,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.v1no.LJL.payment_service.model.entity.SubscriptionPlan;
-import com.v1no.LJL.payment_service.model.enums.PlanType;
 import com.v1no.LJL.payment_service.repository.SubscriptionPlanRepository;
 
 import java.math.BigDecimal;
@@ -33,77 +32,43 @@ public class DataInitializer implements CommandLineRunner {
 
     private void initSubscriptionPlans() {
         List<SubscriptionPlan> plans = Arrays.asList(
-            // ========== BASIC PLANS ==========
             SubscriptionPlan.builder()
-                .code("BASIC_MONTHLY")
-                .name("Gói Basic - Tháng")
+                .code("MONTHLY")
+                .name("Gói tháng")
+                .description("Truy cập đầy đủ tính năng trong 30 ngày, linh hoạt, dễ bắt đầu.")
                 .price(new BigDecimal("49000"))
                 .durationDays(30)
                 .discount(0)
-                .type(PlanType.BASIC)
                 .isActive(true)
                 .build(),
 
             SubscriptionPlan.builder()
-                .code("BASIC_YEARLY")
-                .name("Gói Basic - Năm")
-                .price(new BigDecimal("490000"))
+                .code("QUARTER")
+                .name("Gói Quý")
+                .description("Tiết kiệm hơn khi đăng ký 3 tháng, phù hợp học liên tục.")
+                .price(new BigDecimal("147000"))
+                .durationDays(90)
+                .discount(5)
+                .isActive(true)
+                .build(),
+
+            SubscriptionPlan.builder()
+                .code("YEARLY")
+                .name("Gói năm")
+                .description("Truy cập dài hạn 12 tháng với chi phí tối ưu nhất.")
+                .price(new BigDecimal("1288000"))
                 .durationDays(365)
                 .discount(15)
-                .type(PlanType.BASIC)
                 .isActive(true)
                 .build(),
 
-            // ========== PLUS PLANS ==========
-            SubscriptionPlan.builder()
-                .code("PLUS_MONTHLY")
-                .name("Gói Plus - Tháng")
-                .price(new BigDecimal("99000"))
-                .durationDays(30)
-                .discount(0)
-                .type(PlanType.PLUS)
-                .isActive(true)
-                .build(),
-
-            SubscriptionPlan.builder()
-                .code("PLUS_YEARLY")
-                .name("Gói Plus - Năm")
-                .price(new BigDecimal("990000"))
-                .durationDays(365)
-                .discount(15)
-                .type(PlanType.PLUS)
-                .isActive(true)
-                .build(),
-
-            // ========== PREMIUM PLANS ==========
-            SubscriptionPlan.builder()
-                .code("PREMIUM_MONTHLY")
-                .name("Gói Premium - Tháng")
-                .price(new BigDecimal("149000"))
-                .durationDays(30)
-                .discount(0)
-                .type(PlanType.PREMIUM)
-                .isActive(true)
-                .build(),
-
-            SubscriptionPlan.builder()
-                .code("PREMIUM_YEARLY")
-                .name("Gói Premium - Năm")
-                .price(new BigDecimal("1490000"))
-                .durationDays(365)
-                .discount(15)
-                .type(PlanType.PREMIUM)
-                .isActive(true)
-                .build(),
-
-            // ========== FULLLIFE PLAN ==========
             SubscriptionPlan.builder()
                 .code("FULLLIFE")
-                .name("Gói Trọn Đời")
+                .name("Gói vĩnh viễn")
+                .description("CThanh toán một lần, học trọn đời, không giới hạn thời gian.")
                 .price(new BigDecimal("2990000"))
                 .durationDays(null)
                 .discount(0)
-                .type(PlanType.PREMIUM)
                 .isActive(true)
                 .build()
         );

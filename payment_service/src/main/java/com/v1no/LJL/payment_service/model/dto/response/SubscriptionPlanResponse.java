@@ -18,11 +18,11 @@ public class SubscriptionPlanResponse {
     private UUID id;
     private String code;
     private String name;
+    private String description;
     private BigDecimal price;
     private BigDecimal finalPrice;
     private Integer durationDays;
     private Integer discount;
-    private String type;
     private Boolean isActive;
     private LocalDateTime createdAt;
 }

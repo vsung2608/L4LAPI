@@ -13,6 +13,7 @@ import com.v1no.LJL.payment_service.model.dto.response.SubscriptionPlanResponse;
 import com.v1no.LJL.payment_service.model.entity.SubscriptionPlan;
 import com.v1no.LJL.payment_service.model.enums.PlanType;
 import com.v1no.LJL.payment_service.repository.SubscriptionPlanRepository;
+import com.v1no.LJL.payment_service.service.SubscriptionPlanService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,21 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SubscriptionPlanServiceImpl {
+public class SubscriptionPlanServiceImpl implements SubscriptionPlanService{
     private final SubscriptionPlanRepository planRepository;
     private final SubscriptionPlanMapper planMapper;
 
     @Transactional(readOnly = true)
     public List<SubscriptionPlanResponse> getAllActivePlans() {
         return planRepository.findByIsActiveTrue().stream()
-            .map(planMapper::toResponse)
-            .collect(Collectors.toList());
-    }
-
-
-    @Transactional(readOnly = true)
-    public List<SubscriptionPlanResponse> getVipPlans() {
-        return planRepository.findByTypeAndIsActiveTrue(PlanType.PREMIUM).stream()
             .map(planMapper::toResponse)
             .collect(Collectors.toList());
     }
@@ -70,7 +63,7 @@ public class SubscriptionPlanServiceImpl {
     }
 
     public SubscriptionPlanResponse updatePlan(UUID id, CreateSubscriptionPlanRequest request) {
-        log.info("Updating subscription plan: {}", id);
+        log.info("Updating  plan: {}", id);
 
         SubscriptionPlan plan = planRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Plan not found: " + id));
@@ -85,7 +78,6 @@ public class SubscriptionPlanServiceImpl {
         plan.setPrice(request.getPrice());
         plan.setDurationDays(request.getDurationDays());
         plan.setDiscount(request.getDiscount());
-        plan.setType(PlanType.valueOf(request.getType()));
 
         plan = planRepository.save(plan);
 

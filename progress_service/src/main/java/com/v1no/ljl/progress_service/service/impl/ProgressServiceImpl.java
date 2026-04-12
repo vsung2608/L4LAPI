@@ -19,6 +19,7 @@ import com.v1no.ljl.progress_service.mapper.StudyProgressMapper;
 import com.v1no.ljl.progress_service.model.dto.request.StartLessonRequest;
 import com.v1no.ljl.progress_service.model.dto.request.StudyRecordRequest;
 import com.v1no.ljl.progress_service.model.dto.request.UpdateProgressRequest;
+import com.v1no.ljl.progress_service.model.dto.response.DailyLessonSummaryResponse;
 import com.v1no.ljl.progress_service.model.dto.response.LessonProgressResponse;
 import com.v1no.ljl.progress_service.model.dto.response.StudyRecordResponse;
 import com.v1no.ljl.progress_service.model.entity.UserCardRecord;
@@ -219,5 +220,19 @@ public class ProgressServiceImpl implements ProgressService {
                         .started(studiedDeckIds.contains(deckId))
                         .build())
                 .toList();
+    }
+
+    @Override
+    public List<DailyLessonSummaryResponse> analyst(UUID userId){
+        return userLessonProgressRepository
+            .findDailyLessonCount(userId)
+            .stream()
+            .map(item -> new DailyLessonSummaryResponse(
+                item.getStudyDate(),
+                item.getTotalLessons(),
+                item.getTotalDictation(),
+                item.getTotalShadowing()
+            ))
+            .toList();
     }
 }

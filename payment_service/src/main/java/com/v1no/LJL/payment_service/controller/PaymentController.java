@@ -1,10 +1,10 @@
 package com.v1no.LJL.payment_service.controller;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.v1no.LJL.common.dto.PageResponse;
 import com.v1no.LJL.payment_service.model.dto.request.CreatePaymentRequest;
 import com.v1no.LJL.payment_service.model.dto.response.PaymentDetailResponse;
 import com.v1no.LJL.payment_service.model.dto.response.PaymentResponse;
@@ -27,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/api/v1/payment")
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentController {
@@ -37,7 +38,7 @@ public class PaymentController {
    
     @PostMapping("/create")
     public ResponseEntity<PaymentResponse> createPayment(
-        @RequestHeader("X-User_id") UUID userId,
+        @RequestHeader("X-User-Id") UUID userId,
         @Valid @RequestBody CreatePaymentRequest request,
         HttpServletRequest httpRequest
     ) {
@@ -49,20 +50,32 @@ public class PaymentController {
     }
 
     @GetMapping("/vnpay-return")
-    public ResponseEntity<VNPayCallbackResponse> vnpayReturn(@RequestParam Map<String, String> allParams) {
+    public ResponseEntity<?> vnpayReturn(@RequestParam Map<String, String> allParams) {
         log.info("VNPay return callback received");
         
         VNPayCallbackResponse response = paymentService.handleVNPayCallback(allParams);
-        
-        return ResponseEntity.ok(response);
-    }
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+            .location(URI.create(response.getRedirectUrl()))
+            .build();
+            }
 
     @GetMapping("/history")
-    public ResponseEntity<Page<PaymentDetailResponse>> getPaymentHistory(
-        @RequestHeader("X-User_id") UUID userId,
-        Pageable pageable
+    public ResponseEntity<PageResponse<PaymentDetailResponse>> getPaymentHistory(
+        @RequestHeader("X-User-Id") UUID userId,
+        @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+        @RequestParam(name = "page", defaultValue = "1", required = false) int page
     ) {
-        Page<PaymentDetailResponse> payments = paymentService.getUserPayments(userId, pageable);
+        PageResponse<PaymentDetailResponse> payments = paymentService.getUserPayments(userId, page, size);
+        return ResponseEntity.ok(payments);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<PageResponse<PaymentDetailResponse>> getPaymentHistory(
+        @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+        @RequestParam(name = "page", defaultValue = "1", required = false) int page
+    ) {
+        PageResponse<PaymentDetailResponse> payments = paymentService.getPayments(page, size);
         return ResponseEntity.ok(payments);
     }
 

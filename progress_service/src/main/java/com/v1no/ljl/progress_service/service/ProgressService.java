@@ -9,6 +9,7 @@ import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.ljl.progress_service.model.dto.request.StartLessonRequest;
 import com.v1no.ljl.progress_service.model.dto.request.StudyRecordRequest;
 import com.v1no.ljl.progress_service.model.dto.request.UpdateProgressRequest;
+import com.v1no.ljl.progress_service.model.dto.response.DailyLessonSummaryResponse;
 import com.v1no.ljl.progress_service.model.dto.response.LessonProgressResponse;
 import com.v1no.ljl.progress_service.model.dto.response.StudyRecordResponse;
 import com.v1no.ljl.progress_service.model.enums.LearningMode;
@@ -34,4 +35,6 @@ public interface ProgressService {
     DeckProgressResponse getDeckProgress(UUID userId, UUID deckId);
 
     List<DeckStudiedResponse> getStudiedDecks(UUID userId, List<UUID> deckIds);
+
+    List<DailyLessonSummaryResponse> analyst(UUID userId);
 }

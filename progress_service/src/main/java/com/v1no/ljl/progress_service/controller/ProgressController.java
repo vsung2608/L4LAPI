@@ -22,6 +22,7 @@ import com.v1no.LJL.common.dto.LessonProgressSummary;
 import com.v1no.ljl.progress_service.model.dto.request.StartLessonRequest;
 import com.v1no.ljl.progress_service.model.dto.request.StudyRecordRequest;
 import com.v1no.ljl.progress_service.model.dto.request.UpdateProgressRequest;
+import com.v1no.ljl.progress_service.model.dto.response.DailyLessonSummaryResponse;
 import com.v1no.ljl.progress_service.model.dto.response.LessonProgressResponse;
 import com.v1no.ljl.progress_service.model.dto.response.StudyRecordResponse;
 import com.v1no.ljl.progress_service.model.enums.LearningMode;
@@ -143,4 +144,11 @@ public class ProgressController {
                 ApiResponse.ok(progressService.getStudiedDecks(userId, deckIds))
         );
     }
+
+    @GetMapping("/analyst")
+    public ResponseEntity<ApiResponse<List<DailyLessonSummaryResponse>>> getMethodName(
+        @RequestHeader("X-User-Id") UUID userId
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(progressService.analyst(userId)));
+    }  
 }

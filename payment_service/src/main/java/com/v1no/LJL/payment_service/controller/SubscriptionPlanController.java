@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/payment/plans")
+@RequestMapping("/api/v1/payment/plans")
 @RequiredArgsConstructor
 public class SubscriptionPlanController {
 
@@ -31,12 +31,6 @@ public class SubscriptionPlanController {
     @GetMapping
     public ResponseEntity<List<SubscriptionPlanResponse>> getAllActivePlans() {
         List<SubscriptionPlanResponse> plans = planService.getAllActivePlans();
-        return ResponseEntity.ok(plans);
-    }
-
-    @GetMapping("/vip")
-    public ResponseEntity<List<SubscriptionPlanResponse>> getVipPlans() {
-        List<SubscriptionPlanResponse> plans = planService.getVipPlans();
         return ResponseEntity.ok(plans);
     }
 

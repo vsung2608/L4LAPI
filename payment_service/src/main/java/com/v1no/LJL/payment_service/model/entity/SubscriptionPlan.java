@@ -29,6 +29,9 @@ public class SubscriptionPlan {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(name = "desctipiton")
+    private String description;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
@@ -37,10 +40,6 @@ public class SubscriptionPlan {
 
     @Column(name = "discount")
     private Integer discount;
-
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private PlanType type = PlanType.BASIC;
 
     @Column(name = "is_active", nullable = false)
     @Builder.Default

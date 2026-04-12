@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "auth-service", url = "${services.auth-service.url}")
 public interface AuthServiceClient {
-    @PutMapping("/api/auth/internal/users/{userId}/upgrade-vip")
+    @PutMapping("/api/v1/users/internal/{userId}/upgrade-vip")
     void upgradeToVip(
         @PathVariable("userId") UUID userId,
         @RequestParam("planCode") String planCode,
-        @RequestParam(value = "durationDays", required = false) Integer durationDays
+        @RequestParam(value = "durationDays", required = false, defaultValue = "30") Integer durationDays
     );
 }

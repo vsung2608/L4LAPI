@@ -105,10 +105,6 @@ public class Article {
     @Builder.Default
     private Integer estimatedReadMinutes = 1;
 
-    @Column(name = "is_featured", nullable = false)
-    @Builder.Default
-    private Boolean isFeatured = false;
-
     @Column(name = "allow_comments", nullable = false)
     @Builder.Default
     private Boolean allowComments = true;

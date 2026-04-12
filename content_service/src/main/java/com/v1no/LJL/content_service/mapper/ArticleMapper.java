@@ -34,7 +34,6 @@ public class ArticleMapper {
             .featuredImage(request.featuredImage())
             .thumbnailImage(request.thumbnailImage())
             .authorId(request.authorId())
-            .isFeatured(request.isFeatured() != null ? request.isFeatured() : false)
             .allowComments(request.allowComments() != null ? request.allowComments() : true)
             .build();
 
@@ -55,7 +54,6 @@ public class ArticleMapper {
         );
         article.setFeaturedImage(request.featuredImage());
         article.setThumbnailImage(request.thumbnailImage());
-        article.setIsFeatured(request.isFeatured() != null ? request.isFeatured() : false);
         article.setAllowComments(request.allowComments() != null ? request.allowComments() : true);
         article.recalculateReadTime();
     }
@@ -75,7 +73,6 @@ public class ArticleMapper {
             article.getViewCount(),
             article.getLikeCount(),
             article.getCommentCount(),
-            article.getIsFeatured(),
             article.getPublishedAt(),
             article.getCreatedAt()
         );
@@ -101,7 +98,6 @@ public class ArticleMapper {
             article.getViewCount(),
             article.getLikeCount(),
             article.getCommentCount(),
-            article.getIsFeatured(),
             article.getAllowComments(),
             article.getPublishedAt(),
             article.getCreatedAt(),

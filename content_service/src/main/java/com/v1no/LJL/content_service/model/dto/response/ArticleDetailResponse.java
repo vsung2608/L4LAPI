@@ -24,7 +24,6 @@ public record ArticleDetailResponse(
     Integer viewCount,
     Integer likeCount,
     Integer commentCount,
-    Boolean isFeatured,
     Boolean allowComments,
     LocalDateTime publishedAt,
     LocalDateTime createdAt,

@@ -18,13 +18,15 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.v1no.LJL.payment_service.service.VNPayService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class VNPayServiceImpl {
+public class VNPayServiceImpl implements VNPayService{
     @Value("${vnpay.tmn-code}")
     private String vnpTmnCode;
 
@@ -45,7 +47,7 @@ public class VNPayServiceImpl {
             vnpParams.put("vnp_Version", "2.1.0");
             vnpParams.put("vnp_Command", "pay");
             vnpParams.put("vnp_TmnCode", vnpTmnCode);
-            vnpParams.put("vnp_Amount", String.valueOf(amount * 100)); // VNPay yêu cầu * 100
+            vnpParams.put("vnp_Amount", String.valueOf(amount * 100));
             vnpParams.put("vnp_CurrCode", "VND");
             vnpParams.put("vnp_TxnRef", orderId);
             vnpParams.put("vnp_OrderInfo", orderInfo);
@@ -73,11 +75,10 @@ public class VNPayServiceImpl {
                 String fieldName = itr.next();
                 String fieldValue = vnpParams.get(fieldName);
                 if (fieldValue != null && fieldValue.length() > 0) {
-                    // Build hash data
                     hashData.append(fieldName);
                     hashData.append('=');
                     hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                    // Build query
+                    
                     query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
                     query.append('=');
                     query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));

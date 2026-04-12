@@ -15,7 +15,7 @@ public interface UserDeckProgressRepository extends JpaRepository<UserDeckProgre
 
     @Query("""
             SELECT p FROM UserDeckProgress p
-            LEFT JOIN FETCH p.cards
+            LEFT JOIN FETCH p.records
             WHERE p.userId = :userId AND p.deckId = :deckId
             """)
     Optional<UserDeckProgress> findWithCardsByUserIdAndDeckId(

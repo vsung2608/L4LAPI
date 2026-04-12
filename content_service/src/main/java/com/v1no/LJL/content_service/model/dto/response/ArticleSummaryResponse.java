@@ -19,7 +19,6 @@ public record ArticleSummaryResponse(
     Integer viewCount,
     Integer likeCount,
     Integer commentCount,
-    Boolean isFeatured,
     LocalDateTime publishedAt,
     LocalDateTime createdAt
 ) {}

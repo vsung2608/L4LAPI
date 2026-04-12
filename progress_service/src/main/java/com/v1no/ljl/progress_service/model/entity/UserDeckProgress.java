@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.v1no.ljl.progress_service.model.enums.CardMark;
 
 @Entity
 @Table(

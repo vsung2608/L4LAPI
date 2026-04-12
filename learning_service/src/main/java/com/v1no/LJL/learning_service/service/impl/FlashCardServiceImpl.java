@@ -20,8 +20,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -77,13 +79,14 @@ public class FlashCardServiceImpl implements FlashCardService {
             return List.of();
         }
 
-        DeckProgressResponse deckProgress = progressServiceClient
-                .getDeckProgress(userId, deckId)
-                .getData();
+        Map<UUID, CardProgressResponse> progressMap = Optional.ofNullable(
+                progressServiceClient.getDeckProgress(userId, deckId).getData()
+            )
+            .map(DeckProgressResponse::records)
+            .orElse(Collections.emptyList())
+            .stream()
+            .collect(Collectors.toMap(CardProgressResponse::flashCardId, Function.identity()));
 
-        Map<UUID, CardProgressResponse> progressMap = deckProgress.records()
-                .stream()
-                .collect(Collectors.toMap(CardProgressResponse::flashCardId, Function.identity()));
 
         return cards.stream()
                 .map(card -> flashCardMapper.toResponse(card, progressMap.get(card.getId())))

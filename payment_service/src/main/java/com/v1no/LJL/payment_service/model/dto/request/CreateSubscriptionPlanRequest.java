@@ -32,7 +32,4 @@ public class CreateSubscriptionPlanRequest {
     @Min(0)
     @Max(100)
     private Integer discount;
-
-    @NotNull(message = "Plan type is required")
-    private String type;
 }

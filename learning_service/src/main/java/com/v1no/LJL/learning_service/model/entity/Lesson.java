@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.v1no.LJL.learning_service.model.enums.ContentStatus;
-import com.v1no.LJL.learning_service.model.enums.JlptLevel;
 
 import jakarta.persistence.*;
 import lombok.*;

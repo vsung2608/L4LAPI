@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.v1no.ljl.progress_service.model.dto.response.DailyLessonSummary;
 import com.v1no.ljl.progress_service.model.entity.UserLessonProgress;
 import com.v1no.ljl.progress_service.model.enums.LearningMode;
 import com.v1no.ljl.progress_service.model.enums.LessonStatus;
@@ -46,4 +47,22 @@ public interface UserLessonProgressRepository extends JpaRepository<UserLessonPr
     );
 
     boolean existsByUserIdAndLessonIdAndMode(UUID userId, UUID lessonId, LearningMode mode);
+
+   @Query(value = """
+        SELECT
+            d.study_date,
+            COUNT(ulp.lesson_id)                                 AS total_lessons,
+            COUNT(CASE WHEN ulp.mode = 'DICTATION' THEN 1 END)  AS total_dictation,
+            COUNT(CASE WHEN ulp.mode = 'SHADOWING' THEN 1 END)  AS total_shadowing
+        FROM (
+            SELECT CURRENT_DATE - INTERVAL '1 day' * s AS study_date
+            FROM generate_series(0, 6) s
+        ) d
+        LEFT JOIN user_lesson_progress ulp
+            ON DATE(ulp.started_at) = d.study_date
+            AND ulp.user_id = :userId
+        GROUP BY d.study_date
+        ORDER BY d.study_date DESC
+        """, nativeQuery = true)
+    List<DailyLessonSummary> findDailyLessonCount(@Param("userId") UUID userId);
 }
