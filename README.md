@@ -1,6 +1,6 @@
-# LJL — Learn Japanese Language
+# L4L — Listening for learning
 
-Nền tảng học tiếng Nhật trực tuyến xây dựng theo kiến trúc **Microservices** với Spring Boot & Spring Cloud.
+Nền tảng học ngoại ngữ trực tuyến xây dựng theo kiến trúc **Microservices** với Spring Boot & Spring Cloud.
 
 ---
 
