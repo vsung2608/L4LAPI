@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class GroupMessageController {
 
     private final GroupMessageService messageService;
+    private final SimpMessagingTemplate messagingTemplate;
     private static final String USER_ID_HEADER    = "X-User-Id";
     private static final String MODERATOR_HEADER  = "X-Is-Moderator";
 
@@ -36,7 +38,10 @@ public class GroupMessageController {
             @PathVariable UUID groupId,
             @RequestHeader(USER_ID_HEADER) UUID userId,
             @Valid @RequestBody SendMessageRequest request) {
-        return ApiResponse.ok( messageService.send(groupId, request, userId));
+
+        GroupMessageResponse response = messageService.send(groupId, request, userId);
+        messagingTemplate.convertAndSend("/topic/groups/" + groupId + "/messages", response);
+        return ApiResponse.ok(response);
     }
 
     @GetMapping
