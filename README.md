@@ -10,7 +10,7 @@ Nền tảng học ngoại ngữ trực tuyến xây dựng theo kiến trúc **
 Client
   │
   ▼
-API Gateway  ──► Config Server
+API Gateway  ──► Config Server  
   │               Discovery Server (Eureka)
   ├──► Auth Service
   ├──► Learning Service

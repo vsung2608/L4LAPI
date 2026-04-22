@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,12 +102,13 @@ public class FlashCardServiceImpl implements FlashCardService {
                     "Cannot find card deck with ID::%s".formatted(deckId));
         }
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<FlashCard> pageResponse = flashCardRepository.findAllByDeckId(deckId, pageable);
 
         return PageResponse.<FlashCardResponse>builder()
             .data(pageResponse.getContent().stream()
                     .map(fl -> flashCardMapper.toResponse(fl, null))
+                    .sorted(Comparator.comparing(FlashCardResponse::displayOrder))
                     .toList())
             .page(page)
             .totalElements(pageResponse.getTotalElements())

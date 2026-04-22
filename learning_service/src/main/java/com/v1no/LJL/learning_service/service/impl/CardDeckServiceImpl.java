@@ -90,7 +90,7 @@ public class CardDeckServiceImpl implements CardDeckService {
     @Transactional(readOnly = true)
     public PageResponse<CardDeckResponse> getAllForAdmin(int page, int size, String language){
         LanguageCode languageCode = EnumType.valueOf(LanguageCode.class, language);
-        Pageable pageable = PageRequest.of(size, page - 1);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<CardDeck> pageResponse = cardDeckRepository.findAllByLanguage(languageCode, pageable);
         return PageResponse.<CardDeckResponse>builder()
                 .data(pageResponse.getContent().stream()

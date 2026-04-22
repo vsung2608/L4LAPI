@@ -40,7 +40,7 @@ public class CardDeckController {
             @RequestParam(required = false, defaultValue = "10") int size,
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "en") String language) {
-        return ResponseEntity.ok(cardDeckService.getAllForAdmin(size, page, language));
+        return ResponseEntity.ok(cardDeckService.getAllForAdmin(page, size, language));
     }
 
     @PutMapping("/{id}")

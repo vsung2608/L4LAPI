@@ -45,6 +45,7 @@ public class FlashCardMapper {
         return FlashCardResponse.builder()
                 .id(card.getId())
                 .content(card.getContent())
+                .thumbnail(card.getThumbnailUrl())
                 .transcription(card.getTranscription())
                 .translation(card.getTranslation())
                 .exampleLang(card.getExampleLang())
